@@ -1,0 +1,104 @@
+<script type="text/javascript">
+    RED.nodes.registerType("sony-audio-request",
+    {
+        category:     "sony audio",
+        color:        "#2DABCE",
+        icon:         "sony.png",
+        inputs:       1,
+        outputs:      2,
+        inputLabels:  "request",
+        outputLabels: ["result parameters", "error"],
+        paletteLabel: "request",
+        label: function()
+        {
+            return (this.name || "request");
+        },
+        labelStyle: function()
+        {
+            return (this.name ? "node_label_italic" : "");
+        },
+        defaults:
+        {
+            name:
+            {
+                value: ""
+            },
+            device:
+            {
+                value: "",
+                type:  "sony-audio-device"
+            }
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="sony-audio-request">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-device"><i class="fa fa-music"></i> Device</label>
+        <input type="text" id="node-input-device" placeholder="Device">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="sony-audio-request">
+    <p>
+        Sends a RAW request to a Sony audio device.
+    </p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>service<span class="property-type">string</span></dt>
+        <dd>the API service of the request</dd>
+        <dt>method<span class="property-type">string</span></dt>
+        <dd>the API method of the request</dd>
+        <dt>version<span class="property-type">string</span></dt>
+        <dd>the API version of the request</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>the arguments of the request.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+        <li>Result (only sent on success)
+            <dl class="message-properties">
+                <dt>service<span class="property-type">string</span></dt>
+                <dd>the API service of the request</dd>
+                <dt>method<span class="property-type">string</span></dt>
+                <dd>the API method of the request</dd>
+                <dt>version<span class="property-type">string</span></dt>
+                <dd>the API version of the request</dd>
+                <dt>payload<span class="property-type">object</span></dt>
+                <dd>the result of the request.</dd>
+            </dl>
+        </li>
+        <li>Error (only sent on failure)
+            <dl class="message-properties">
+                <dt>service<span class="property-type">string</span></dt>
+                <dd>the API service of the request</dd>
+                <dt>method<span class="property-type">string</span></dt>
+                <dd>the API method of the request</dd>
+                <dt>version<span class="property-type">string</span></dt>
+                <dd>the API version of the request</dd>
+                <dt>payload<span class="property-type">object</span></dt>
+                <dd>the error information.</dd>
+            </dl>
+        </li>
+    </ol>
+    <h3>Details</h3>
+    <p>
+        This node gives you the full power of the Sony Audio Control API but
+        requires knowledge of the API (methods, versions, arguments). The Result
+        output contains the raw result as it comes from the device. It can also
+        be used to chain multiple requests. The Error output contains an error
+        code in <code>msg.payload.error</code> and a description of the error in
+        <code>msg.payload.description</code>.
+    </p>
+    <p>
+        You can use the control and/or filter node to get a more simplified
+        access to your Sony audio device, please check these nodes.
+    <p>
+        See <a href="https://developer.sony.com/develop/audio-control-api/api-references/api-overview-2">Sony Audio Control API Reference</a>
+        for more details.
+    </p>
+</script>

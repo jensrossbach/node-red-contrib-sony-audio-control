@@ -1,0 +1,28 @@
+{
+    "name": "node-red-contrib-sony-audio-control",
+    "description": "Node-RED nodes for accessing Sony Audio Control API",
+    "version": "0.0.2",
+    "author": "Jens Rossbach",
+    "license": "ISC",
+    "keywords": [
+        "node-red",
+        "sony",
+        "audio",
+        "audio-control-api"
+    ],
+    "dependencies": {
+        "request": "^2.88.0",
+        "request-promise": "latest",
+        "websocket": "latest"
+    },
+    "scripts": {},
+    "node-red": {
+        "nodes": {
+            "sony-audio-device": "nodes/sony-audio-device.js",
+            "sony-audio-request": "nodes/sony-audio-request.js",
+            "sony-audio-event": "nodes/sony-audio-event.js",
+            "sony-audio-control": "nodes/sony-audio-control.js",
+            "sony-audio-filter": "nodes/sony-audio-filter.js"
+        }
+    }
+}

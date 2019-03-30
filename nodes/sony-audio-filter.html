@@ -1,0 +1,183 @@
+<script type="text/javascript">
+    RED.nodes.registerType("sony-audio-filter",
+    {
+        category:     "sony audio",
+        color:        "#2DABCE",
+        icon:         "sony.png",
+        inputs:       1,
+        outputs:      1,
+        inputLabels:  "result/event parameters",
+        outputLabels: function(index)
+        {
+            return this.filters[index];
+        },
+        paletteLabel: "filter",
+        label: function()
+        {
+            if (this.name)
+            {
+                return this.name;
+            }
+            else
+            {
+                let label = "filter: " + this.filters.join();
+                if (label.length > 25)
+                {
+                    label = label.substring(0, 25) + "...";
+                }
+
+                return label;
+            }
+        },
+        labelStyle: function()
+        {
+            return (this.name ? "node_label_italic" : "");
+        },
+        defaults:
+        {
+            name:
+            {
+                value: ""
+            },
+            device:
+            {
+                value: "",
+                type:  "sony-audio-device"
+            },
+            filters:
+            {
+                value: ["powered"]
+            },
+            outputs:
+            {
+                value: 1
+            }
+        },
+        oneditprepare: function()
+        {
+            $("#node-input-filter-list").css("min-height", "250px").css("min-width", "250px").editableList(
+            {
+                removable: true,
+                sortable: true,
+                addItem: function(item, index, data)
+                {
+                    if (!("filter" in data))
+                    {
+                        data.filter = "isPoweredOn";
+                    }
+
+                    var sel = $("<select/>").appendTo(item);
+                    sel.append($("<option></option>").val("powered").text("Powered"));
+                    sel.append($("<option></option>").val("standby").text("Standby"));
+                    sel.append($("<option></option>").val("source").text("Source"));
+                    sel.append($("<option></option>").val("volume").text("Volume"));
+                    sel.append($("<option></option>").val("muted").text("Muted"));
+
+                    var idx = $("<span/>", {style: "float: right; margin-top: 6px;"}).appendTo(item);
+                    idx.append(" &#8594; <span class=\"node-input-filter-index\">" + (index + 1) + "</span> ");
+
+                    sel.val(data.filter);
+                    $("#node-input-outputs").val($("#node-input-filter-list").editableList("length"));
+                },
+                removeItem: function(data)
+                {
+                    var filterList = $("#node-input-filter-list").editableList("items");
+                    filterList.each(function(index)
+                    {
+                        $(this).find(".node-input-filter-index").html(index + 1);
+                    });
+
+                    $("#node-input-outputs").val($("#node-input-filter-list").editableList("length"));
+                },
+                sortItems: function(data)
+                {
+                    var filterList = $("#node-input-filter-list").editableList("items");
+                    filterList.each(function(index)
+                    {
+                        $(this).find(".node-input-filter-index").html(index + 1);
+                    });
+                }
+            });
+
+            this.filters.forEach(filter =>
+            {
+                $("#node-input-filter-list").editableList("addItem", {filter: filter});
+            });
+        },
+        oneditsave: function()
+        {
+            var node = this;
+            var filterList = $("#node-input-filter-list").editableList("items");
+
+            node.filters = [];
+            filterList.each(function(index)
+            {
+                node.filters.push($(this).find("select").val());
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="sony-audio-filter">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-device"><i class="fa fa-music"></i> Device</label>
+        <input type="text" id="node-input-device" placeholder="Device">
+    </div>
+    <div class="form-row" style="padding-top: 10px">
+        <label for="node-input-filter-list"><i class="fa fa-filter"></i> Filters</label>
+        <div class="form-row node-input-filter-list-row">
+            <ol id="node-input-filter-list"></ol>
+        </div>
+        <input type="hidden" id="node-input-outputs"/>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="sony-audio-filter">
+    <p>
+        Helper node for filtering responses from the Sony Audio Control API.
+    </p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload<span class="property-type">object</span></dt>
+        <dd>the parameters of the result or event.</dd>
+        <dt>method<span class="property-type">string</span></dt>
+        <dd>the method to which the parameters belong.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload<span class="property-type">bool | number | object</span></dt>
+        <dd>depends on the filter selected for the output.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>
+        Connect this node with the output of a request or event node and select
+        one or more filters in the configuration. Each filter has a dedicated
+        output and sends a message if the input is applicable to the filter.
+    </p>
+    <p>
+        This node does not cover all aspects of the API, however it makes the
+        usage of the API more convenient for a subset of functions.
+    </p>
+    <p>
+        For more information on the filters and their outputs, refer to the
+        online documentation:
+        ... (TODO: insert link)
+    </p>
+    <h3>Configuration</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>Optionally specify a name for the node.</dd>
+        <dt>Device</dt>
+        <dd>Select the Sony audio device.</dd>
+        <dt>Filters</dt>
+        <dd>
+            Add new filters and select the type of filter. The number on the
+            right side shows the number of the output to which the result of
+            the filter will be sent.
+        </dd>
+    </dl>
+</script>

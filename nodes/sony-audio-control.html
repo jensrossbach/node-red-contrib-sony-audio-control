@@ -1,0 +1,115 @@
+<script type="text/javascript">
+    RED.nodes.registerType("sony-audio-control",
+    {
+        category:     "sony audio",
+        color:        "#2DABCE",
+        icon:         "sony.png",
+        inputs:       1,
+        outputs:      1,
+        inputLabels:  "args",
+        outputLabels: ["request"],
+        paletteLabel: "control",
+        label: function()
+        {
+            return (this.name || "control: " + this.command);
+        },
+        labelStyle: function()
+        {
+            return (this.name ? "node_label_italic" : "");
+        },
+        defaults:
+        {
+            name:
+            {
+                value: ""
+            },
+            device:
+            {
+                value: "",
+                type:  "sony-audio-device"
+            },
+            command:
+            {
+                value: "powerOn"
+            }
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="sony-audio-control">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-device"><i class="fa fa-music"></i> Device</label>
+        <input type="text" id="node-input-device" placeholder="Device">
+    </div>
+    <div class="form-row">
+        <label for="node-input-command"><i class="fa fa-cog"></i> Command</label>
+        <select id="node-input-command">
+            <option value="powerOn">Power ON</option>
+            <option value="powerOff">Power OFF</option>
+            <option value="standby">Standby</option>
+            <option value="setSource">Set Source</option>
+            <option value="setVolume">Set Volume</option>
+            <option value="mute">Mute</option>
+            <option value="unmute">Unmute</option>
+            <option value="toggleMute">Toggle Mute</option>
+            <option value="setSoundSettings">Set Sound Settings</option>
+            <option value="getPowerStatus">Get Power Status</option>
+            <option value="getSource">Get Source</option>
+            <option value="getVolumeInfo">Get Volume Information</option>
+            <option value="getSoundSettings">Get Sound Settings</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="sony-audio-control">
+    <p>
+        Helper node for creating requests to the Sony Audio Control API.
+    </p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload<span class="property-type">number | object</span></dt>
+        <dd>the argument(s) of the command.</dd>
+        <dt class="optional">command<span class="property-type">string</span></dt>
+        <dd>
+            the command to send to the device (if omitted, the command
+            selected in the configuration of the node is used).
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload<span class="property-type">object</span></dt>
+        <dd>the request which can be passed to the request node.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>
+        Connect this node with the input of a request node and select a command
+        (alternatively the command can be passed via <code>msg.command</code>).
+        Some commands need further arguments which have to be passed through
+        <code>msg.payload</code>.
+    </p>
+    <p>
+        This node does not cover all aspects of the API, however it makes the
+        usage of the API more convenient for a subset of functions.
+    </p>
+    <p>
+        For more information on the commands and their arguments, refer to the
+        online documentation:
+        ... (TODO: insert link)
+    </p>
+    <h3>Configuration</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>Optionally specify a name for the node.</dd>
+        <dt>Device</dt>
+        <dd>Select the Sony audio device.</dd>
+        <dt>Command</dt>
+        <dd>
+            Select the command to be sent to the device. The selected command
+            can be overwritten by specifying the command in <code>msg.command</code>.
+        </dd>
+    </dl>
+</script>

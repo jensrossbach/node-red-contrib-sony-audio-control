@@ -1,0 +1,146 @@
+<script type="text/javascript">
+    RED.nodes.registerType("sony-audio-device",
+    {
+        category: "config",
+        color:    "#2DABCE",
+        label: function()
+        {
+            return (this.name || "Sony Audio API device");
+        },
+        defaults:
+        {
+            name:
+            {
+                value:    "",
+                required: true
+            },
+            host:
+            {
+                value:    "",
+                required: true,
+                validate: RED.validators.regex(/^([0-9]{1,3}\.){3}[0-9]{1,3}$|^([a-zA-Z0-9]+(([\-]?[a-zA-Z0-9]+)*\.)+)*[a-zA-Z]{2,}$/)
+            },
+            port:
+            {
+                value:    "10000",
+                validate: RED.validators.number()
+            },
+            notifyPowerStatus:
+            {
+                value:    true
+            },
+            notifyStorageStatus:
+            {
+                value:    false
+            },
+            notifySettingsUpdate:
+            {
+                value:    false
+            },
+            notifySWUpdateInfo:
+            {
+                value:    false
+            },
+            notifyVolumeInformation:
+            {
+                value:    false
+            },
+            notifyExternalTerminalStatus:
+            {
+                value:    false
+            },
+            notifyAvailablePlaybackFunction:
+            {
+                value:    false
+            },
+            notifyPlayingContentInfo:
+            {
+                value:    false
+            }
+        },
+        oneditsave: function()
+        {
+
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="sony-audio-device">
+    <style>
+        .checkbox-row
+        {
+            padding-top: 10px;
+            padding-bottom: 5px;
+        }
+
+        input[type=checkbox]
+        {
+            vertical-align: top;
+            bottom:         8px;
+        }
+    </style>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="fa fa-globe"></i> Host</label>
+        <input type="text" id="node-config-input-host" placeholder="Host">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="fa fa-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port" placeholder="Port">
+    </div>
+    <div class="checkbox-row">
+        <label><i class="fa fa-calendar-o"></i> Subscribed Events:</label>
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyPowerStatus"> Power Status
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyStorageStatus"> Storage Status
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifySettingsUpdate"> Settings Update
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifySWUpdateInfo"> Software Update Information
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyVolumeInformation"> Volume Information
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyExternalTerminalStatus"> External Terminal Status
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyAvailablePlaybackFunction"> Available Playback Function
+    </div>
+    <div>
+        <input type="checkbox" id="node-config-input-notifyPlayingContentInfo"> Playing Content Information
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="sony-audio-device">
+    <p>Configures a Sony audio device.</p>
+    <h3>Details</h3>
+    <ul>
+        <li>
+            <b>Name:</b><br>
+            Specify a name for the configuration.
+        </li>
+        <li>
+            <b>Host:</b><br>
+            Specify the host (IP address or host name) of the device.
+        </li>
+        <li>
+            <b>Port:</b><br>
+            Optionally specify a port for the device.
+        </li>
+        <li>
+            <b>Subscribed Events</b><br>
+            Select the events you want to subscribe for. Only those events which
+            are checked here and which are supported by the device can be notified
+            by event nodes.
+        </li>
+    </ul>
+</script>

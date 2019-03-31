@@ -9,7 +9,7 @@
         inputLabels:  "result/event parameters",
         outputLabels: function(index)
         {
-            return this.filters[index];
+            return this.filters[index].name;
         },
         paletteLabel: "filter",
         label: function()
@@ -20,7 +20,18 @@
             }
             else
             {
-                let label = "filter: " + this.filters.join();
+                let label = "filter: ";
+
+                for (i=0; i<this.filters.length; ++i)
+                {
+                    label += this.filters[i].name;
+
+                    if (i != this.filters.length - 1)
+                    {
+                        label += ", ";
+                    }
+                }
+
                 if (label.length > 25)
                 {
                     label = label.substring(0, 25) + "...";
@@ -46,7 +57,7 @@
             },
             filters:
             {
-                value: ["powered"]
+                value: [{filter: "powered"}]
             },
             outputs:
             {
@@ -55,31 +66,65 @@
         },
         oneditprepare: function()
         {
-            $("#node-input-filter-list").css("min-height", "250px").css("min-width", "250px").editableList(
+            $("#node-input-filter-list").css("min-height", "250px").editableList(
             {
                 removable: true,
                 sortable: true,
-                addItem: function(item, index, data)
+                addItem: function(item, index, filter)
                 {
-                    if (!("filter" in data))
+                    if (!("name" in filter))
                     {
-                        data.filter = "isPoweredOn";
+                        filter.name = "powered";
                     }
 
-                    var sel = $("<select/>").appendTo(item);
-                    sel.append($("<option></option>").val("powered").text("Powered"));
-                    sel.append($("<option></option>").val("standby").text("Standby"));
-                    sel.append($("<option></option>").val("source").text("Source"));
-                    sel.append($("<option></option>").val("volume").text("Volume"));
-                    sel.append($("<option></option>").val("muted").text("Muted"));
+                    var row1 = $("<div/>").appendTo(item);
+                    var row2 = $("<div/>", {style: "padding-top: 5px;"}).appendTo(item);
 
-                    var idx = $("<span/>", {style: "float: right; margin-top: 6px;"}).appendTo(item);
+                    var filterName = $("<select/>", {class: "node-input-filter-name"}).appendTo(row1);
+                    filterName.append($("<option></option>").val("powered").text("Powered"));
+                    filterName.append($("<option></option>").val("standby").text("Standby"));
+                    filterName.append($("<option></option>").val("source").text("Source"));
+                    filterName.append($("<option></option>").val("volume").text("Volume"));
+                    filterName.append($("<option></option>").val("muted").text("Muted"));
+                    filterName.append($("<option></option>").val("sound-setting").text("Sound Setting"));
+
+                    var idx = $("<span/>", {style: "float: right; margin-top: 6px;"}).appendTo(row1);
                     idx.append(" &#8594; <span class=\"node-input-filter-index\">" + (index + 1) + "</span> ");
 
-                    sel.val(data.filter);
+                    $("<label/>", {for: "node-input-soundsetting-" + index, style: "width: auto; padding-right: 10px;"}).text("Setting:").appendTo(row2);
+                    var soundSetting = $("<select/>", {id: "node-input-soundsetting-" + index,
+                                                       class: "node-input-filter-soundsetting",
+                                                       style: "width: 120px; height: auto;"}).appendTo(row2);
+                    soundSetting.append($("<option></option>").val("soundField").text("Sound Field"));
+                    soundSetting.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
+                    soundSetting.append($("<option></option>").val("nightMode").text("Night Mode"));
+                    soundSetting.append($("<option></option>").val("footballMode").text("Football Mode"));
+                    soundSetting.append($("<option></option>").val("voice").text("Voice"));
+
+                    filterName.change(function()
+                    {
+                        value = filterName.val();
+                        if (value == "sound-setting")
+                        {
+                            row2.show();
+                        }
+                        else
+                        {
+                            row2.hide();
+                        }
+                    });
+
+                    if ("args" in filter)
+                    {
+                        soundSetting.val(filter.args.setting);
+                    }
+
+                    filterName.val(filter.name);
+                    filterName.change();
+
                     $("#node-input-outputs").val($("#node-input-filter-list").editableList("length"));
                 },
-                removeItem: function(data)
+                removeItem: function(filter)
                 {
                     var filterList = $("#node-input-filter-list").editableList("items");
                     filterList.each(function(index)
@@ -89,7 +134,7 @@
 
                     $("#node-input-outputs").val($("#node-input-filter-list").editableList("length"));
                 },
-                sortItems: function(data)
+                sortItems: function(filter)
                 {
                     var filterList = $("#node-input-filter-list").editableList("items");
                     filterList.each(function(index)
@@ -101,7 +146,7 @@
 
             this.filters.forEach(filter =>
             {
-                $("#node-input-filter-list").editableList("addItem", {filter: filter});
+                $("#node-input-filter-list").editableList("addItem", filter);
             });
         },
         oneditsave: function()
@@ -112,7 +157,13 @@
             node.filters = [];
             filterList.each(function(index)
             {
-                node.filters.push($(this).find("select").val());
+                var filter = {name: $(this).find(".node-input-filter-name").val()};
+                if (filter.name == "sound-setting")
+                {
+                    filter["args"] = {setting: $(this).find(".node-input-filter-soundsetting").val()};
+                }
+
+                node.filters.push(filter);
             });
         }
     });

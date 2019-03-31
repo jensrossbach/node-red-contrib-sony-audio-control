@@ -59,10 +59,15 @@ module.exports = function(RED)
                         this.send([null, respMsg]);
                     });
                 }
-                else
+                else if (msg.method === "_passthrough")
                 {
                     // just forward the message to the error output
                     this.send([null, msg]);
+                }
+                else
+                {
+                    let respMsg = {payload: {error: 32768, description: "Invalid node input"}};
+                    this.send([null, respMsg]);
                 }
             });
         }

@@ -23,7 +23,7 @@ module.exports = function(RED)
                     {
                         outputs.push(null);
 
-                        switch (this.filters[i])
+                        switch (this.filters[i].name)
                         {
                             case "powered":
                             {
@@ -114,6 +114,45 @@ module.exports = function(RED)
                                     if ((mute !== null) && (mute != "toggle"))
                                     {
                                         outputs[i] = {payload: (mute == "on")};
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "sound-setting":
+                            {
+                                if ((msg.payload !== null) &&
+                                    (msg.method == "getSoundSettings"))
+                                {
+                                    for (j=0; j<msg.payload.length; ++j)
+                                    {
+                                        let setting =  msg.payload[j];
+
+                                        if (("target" in setting) &&
+                                            ("currentValue" in setting))
+                                        {
+                                            if (setting.target === this.filters[i].args.setting)
+                                            {
+                                                switch (setting.target)
+                                                {
+                                                    case "soundField":
+                                                    case "voice":
+                                                    {
+                                                        outputs[i] = {payload: setting.currentValue};
+                                                        break;
+                                                    }
+                                                    case "clearAudio":
+                                                    case "nightMode":
+                                                    case "footballMode":
+                                                    {
+                                                        outputs[i] = {payload: (setting.currentValue === "on")};
+                                                        break;
+                                                    }
+                                                }
+
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
 

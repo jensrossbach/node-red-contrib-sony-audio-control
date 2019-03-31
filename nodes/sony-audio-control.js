@@ -143,13 +143,13 @@ module.exports = function(RED)
                             }
                             else
                             {
-                                let errMsg = {payload: {error: 32768, description: "Invalid node input"}};
+                                let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
                                 this.send(errMsg);
                             }
                         }
                         else
                         {
-                            let errMsg = {payload: {error: 32768, description: "Invalid node input"}};
+                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
                             this.send(errMsg);
                         }
 
@@ -215,7 +215,7 @@ module.exports = function(RED)
                         }
                         else
                         {
-                            let errMsg = {payload: {error: 32768, description: "Invalid node input"}};
+                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
                             this.send(errMsg);
                         }
 
@@ -252,7 +252,7 @@ module.exports = function(RED)
                         }
                         else
                         {
-                            let errMsg = {payload: {error: 32768, description: "Invalid node input"}};
+                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
                             this.send(errMsg);
                         }
 
@@ -260,7 +260,7 @@ module.exports = function(RED)
                     }
                     default:
                     {
-                        let errMsg = {payload: {error: 32769, description: "Invalid command"}};
+                        let errMsg = {method: "_passthrough", payload: {error: 32769, description: "Invalid command"}};
                         this.send(errMsg);
                     }
                 }

@@ -31,7 +31,338 @@
             command:
             {
                 value: "powerOn"
+            },
+            volume:
+            {
+                value: 1
+            },
+            relative:
+            {
+                value: false
+            },
+            source:
+            {
+                value: "extInput:tv"
+            },
+            port:
+            {
+                value: 1
+            },
+            zone:
+            {
+                value: 1
+            },
+            soundsettings:
+            {
+                value: [{target: "soundField", value: "clearAudio"}]
+            },
+            target:
+            {
+                value: "soundField"
             }
+        },
+        oneditprepare: function()
+        {
+            var node = this;
+            var commandSelect = $("#node-input-command");
+            var sourceSelect = $("#node-input-source");
+            var relativeVol = $("#node-input-relative");
+            var allZones = $("#node-input-allzones");
+
+            var volSpinner = $("#node-input-volume").spinner(
+            {
+                min: 0,
+                max: 99,
+                step: 1,
+                numberFormat: "n",
+                change: function(event, ui)
+                {
+                    var value = parseInt(this.value, 10);
+                    var min = $(this).spinner("option", "min");
+                    var max = $(this).spinner("option", "max");
+
+                    if (isNaN(value) ||
+                        (value < min))
+                    {
+                        $(this).spinner("value", min);
+                    }
+                    else if (value > max)
+                    {
+                        $(this).spinner("value", max);
+                    }
+
+                    if ((min < 0) && (value == 0))
+                    {
+                        $(this).spinner("value", 1);
+                    }
+                }
+            });
+
+            var portSpinner = $("#node-input-port").spinner(
+            {
+                min: 1,
+                max: 9,
+                step: 1,
+                change: function(event, ui)
+                {
+                    var value = parseInt(this.value, 10);
+                    var min = $(this).spinner("option", "min");
+                    var max = $(this).spinner("option", "max");
+
+                    if (isNaN(value) ||
+                        (value < min))
+                    {
+                        $(this).spinner("value", min);
+                    }
+                    else if (value > max)
+                    {
+                        $(this).spinner("value", max);
+                    }
+                }
+            });
+
+            var zoneSpinner = $("#node-input-zone").spinner(
+            {
+                min: 1,
+                max: 9,
+                step: 1,
+                change: function(event, ui)
+                {
+                    var value = parseInt(this.value, 10);
+                    var min = $(this).spinner("option", "min");
+                    var max = $(this).spinner("option", "max");
+
+                    if (isNaN(value) ||
+                        (value < min))
+                    {
+                        $(this).spinner("value", min);
+                    }
+                    else if (value > max)
+                    {
+                        $(this).spinner("value", max);
+                    }
+                }
+            });
+
+            var soundSettingsList = $("#node-input-soundsettings-list").css("min-height", "250px").editableList(
+            {
+                removable: true,
+                addItem: function(item, index, soundSetting)
+                {
+                    if (!("target" in soundSetting))
+                    {
+                        soundSetting.target = "soundField";
+                        soundSetting.value = "off";
+                    }
+
+                    var target = $("<select/>", {class: "node-input-target"}).appendTo(item);
+                    target.append($("<option></option>").val("soundField").text("Sound Field"));
+                    target.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
+                    target.append($("<option></option>").val("nightMode").text("Night Mode"));
+                    target.append($("<option></option>").val("footballMode").text("Football Mode"));
+                    target.append($("<option></option>").val("voice").text("Voice"));
+
+                    var soundFieldContainer = $("<span/>", {id: "item-elem-soundfield-" + index,
+                                                            style: "padding-left: 10px;"}).appendTo(item);
+                    var soundField = $("<select/>", {class: "node-input-soundfield",
+                                                     style: "width: 120px;"}).appendTo(soundFieldContainer);
+                    soundField.append($("<option></option>").val("off").text("Off"));
+                    soundField.append($("<option></option>").val("standard").text("Standard"));
+                    soundField.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
+                    soundField.append($("<option></option>").val("music").text("Music"));
+                    soundField.append($("<option></option>").val("movie").text("Movie"));
+                    soundField.append($("<option></option>").val("sports").text("Sports"));
+                    soundField.append($("<option></option>").val("game").text("Game"));
+
+                    var voiceTypeContainer = $("<span/>", {id: "item-elem-voicetype-" + index,
+                                                           style: "padding-left: 10px;"}).appendTo(item);
+                    var voiceType = $("<select/>", {class: "node-input-voicetype",
+                                                    style: "width: 120px;"}).appendTo(voiceTypeContainer);
+                    voiceType.append($("<option></option>").val("type1").text("Type 1"));
+                    voiceType.append($("<option></option>").val("type2").text("Type 2"));
+                    voiceType.append($("<option></option>").val("type3").text("Type 3"));
+
+                    var onoffContainer = $("<span/>", {id: "item-elem-onoff-" + index,
+                                                       style: "padding-left: 10px;"}).appendTo(item);
+                    var onoff = $("<input/>", {id: "node-input-onoff-" + index,
+                                               class: "node-input-onoff",
+                                               type: "checkbox",
+                                               style: "vertical-align: text-bottom; width: auto;"}).appendTo(onoffContainer);
+                    $("<label/>", {for: "node-input-onoff-" + index,
+                                   style: "padding-left: 4px;"}).text("Switched On").appendTo(onoffContainer);
+
+                    target.change(function()
+                    {
+                        value = target.val();
+
+                        soundFieldContainer.hide();
+                        voiceTypeContainer.hide();
+                        onoffContainer.hide();
+
+                        if (value == "soundField")
+                        {
+                            soundFieldContainer.show();
+                        }
+                        else if (value == "voice")
+                        {
+                            voiceTypeContainer.show();
+                        }
+                        else
+                        {
+                            onoffContainer.show();
+                        }
+                    });
+
+                    if (soundSetting.target == "soundField")
+                    {
+                        soundField.val(soundSetting.value);
+                    }
+                    else if (soundSetting.target == "voice")
+                    {
+                        voiceType.val(soundSetting.value);
+                    }
+                    else
+                    {
+                        onoff.prop("checked", (soundSetting.value == "on"));
+                    }
+
+                    target.val(soundSetting.target);
+                    target.change();
+                }
+            });
+
+            this.soundsettings.forEach(setting =>
+            {
+                soundSettingsList.editableList("addItem", setting);
+            });
+
+            relativeVol.change(function()
+            {
+                if ($(this).prop("checked"))
+                {
+                    volSpinner.spinner("option", "min", "-10");
+                    volSpinner.spinner("option", "max", "10");
+                }
+                else
+                {
+                    volSpinner.spinner("option", "min", "0");
+                    volSpinner.spinner("option", "max", "99");
+                }
+            });
+
+            allZones.change(function()
+            {
+                if ($(this).prop("checked"))
+                {
+                    zoneSpinner.spinner("disable");
+                    zoneSpinner.spinner("option", "min", "0");
+                    zoneSpinner.spinner("value", 0);
+                }
+                else
+                {
+                    zoneSpinner.spinner("enable");
+                    zoneSpinner.spinner("value", 1);
+                    zoneSpinner.spinner("option", "min", "1");
+                }
+            });
+
+            commandSelect.change(function()
+            {
+                $("#form-row-volume").hide();
+                $("#form-row-source").hide();
+                $("#form-row-zone").hide();
+                $("#form-row-port").hide();
+                $("#form-row-soundsettings").hide();
+                $("#form-row-target").hide();
+
+                var value = $(this).val();
+                switch (value)
+                {
+                    case "setSource":
+                    {
+                        $("#form-row-source").show();
+                        $("#form-row-zone").show();
+
+                        if (sourceSelect.val() == "extInput:hdmi")
+                        {
+                            $("#form-row-port").show();
+                        }
+
+                        break;
+                    }
+                    case "setVolume":
+                    {
+                        $("#form-row-volume").show();
+                        $("#form-row-zone").show();
+
+                        break;
+                    }
+                    case "mute":
+                    case "unmute":
+                    case "toggleMute":
+                    case "getSource":
+                    case "getVolumeInfo":
+                    {
+                        $("#form-row-zone").show();
+                        break;
+                    }
+                    case "setSoundSettings":
+                    {
+                        $("#form-row-soundsettings").show();
+                        break;
+                    }
+                    case "getSoundSettings":
+                    {
+                        $("#form-row-target").show();
+                        break;
+                    }
+                }
+            });
+
+            sourceSelect.change(function()
+            {
+                if ($(this).val() == "extInput:hdmi")
+                {
+                    $("#form-row-port").show();
+                }
+                else
+                {
+                    $("#form-row-port").hide();
+                }
+            });
+
+            commandSelect.change();
+            if (this.zone == 0)
+            {
+                allZones.prop("checked", true);
+                zoneSpinner.spinner("disable");
+                zoneSpinner.spinner("option", "min", "0");
+            }
+        },
+        oneditsave: function()
+        {
+            var node = this;
+            var soundSettingsList = $("#node-input-soundsettings-list").editableList("items");
+
+            node.soundsettings = [];
+            soundSettingsList.each(function(index)
+            {
+                var setting = {target: $(this).find(".node-input-target").val()};
+                if (setting.target == "soundField")
+                {
+                    setting.value = $(this).find(".node-input-soundfield").val();
+                }
+                else if (setting.target == "voice")
+                {
+                    setting.value = $(this).find(".node-input-voicetype").val();
+                }
+                else
+                {
+                    setting.value = $(this).find(".node-input-onoff").prop("checked") ? "on" : "off";
+                }
+
+                node.soundsettings.push(setting);
+            });
         }
     });
 </script>
@@ -42,25 +373,80 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-device"><i class="fa fa-music"></i> Device</label>
+        <label for="node-input-device"><i class="fa fa-cog"></i> Device</label>
         <input type="text" id="node-input-device" placeholder="Device">
     </div>
     <div class="form-row">
-        <label for="node-input-command"><i class="fa fa-cog"></i> Command</label>
+        <label for="node-input-command"><i class="fa fa-play-circle"></i> Command</label>
         <select id="node-input-command">
-            <option value="powerOn">Power ON</option>
-            <option value="powerOff">Power OFF</option>
-            <option value="standby">Standby</option>
-            <option value="setSource">Set Source</option>
-            <option value="setVolume">Set Volume</option>
-            <option value="mute">Mute</option>
-            <option value="unmute">Unmute</option>
-            <option value="toggleMute">Toggle Mute</option>
-            <option value="setSoundSettings">Set Sound Settings</option>
-            <option value="getPowerStatus">Get Power Status</option>
-            <option value="getSource">Get Source</option>
-            <option value="getVolumeInfo">Get Volume Information</option>
-            <option value="getSoundSettings">Get Sound Settings</option>
+            <optgroup label="Set Commands">
+                <option value="powerOn">Power ON</option>
+                <option value="powerOff">Power OFF</option>
+                <option value="standby">Standby</option>
+                <option value="setSource">Set Source</option>
+                <option value="setVolume">Set Volume</option>
+                <option value="mute">Mute</option>
+                <option value="unmute">Unmute</option>
+                <option value="toggleMute">Toggle Mute</option>
+                <option value="setSoundSettings">Set Sound Settings</option>
+            </optgroup>
+            <optgroup label="Get Commands">
+                <option value="getPowerStatus">Get Power Status</option>
+                <option value="getSource">Get Source</option>
+                <option value="getVolumeInfo">Get Volume Information</option>
+                <option value="getSoundSettings">Get Sound Settings</option>
+            </optgroup>
+        </select>
+    </div>
+    <div id="form-row-volume" class="form-row">
+        <label for="node-input-volume"><i class="fa fa-volume-up"></i> Volume</label>
+        <input id="node-input-volume" style="width: 60px; float: left;" value="1">
+        <span style="padding-left: 10px;">
+            <input id="node-input-relative" type="checkbox" style="vertical-align: text-bottom; width: auto;">
+            <label for="node-input-relative">Relative Volume</label>
+        </span>
+    </div>
+    <div id="form-row-source" class="form-row">
+        <label for="node-input-source"><i class="fa fa-sign-in"></i> Source</label>
+        <select id="node-input-source">
+            <option value="extInput:tv">TV</option>
+            <option value="extInput:sat-catv">SAT/CATV</option>
+            <option value="extInput:hdmi">HDMI</option>
+            <option value="extInput:video">Video</option>
+            <option value="extInput:sacd-cd">SACD/CD</option>
+            <option value="extInput:bd-dvd">BD/DVD</option>
+            <option value="storage:usb1">USB Storage</option>
+            <option value="extInput:line">Audio Line</option>
+            <option value="extInput:btAudio">Bluetooth Audio</option>
+            <option value="dlna:music">DLNA</option>
+            <option value="radio:fm">FM Radio</option>
+            <option value="extInput:game">Game</option>
+            <option value="extInput:source">Source</option>
+        </select>
+    </div>
+    <div id="form-row-port" class="form-row">
+        <label for="node-input-port"><i class="fa fa-bookmark"></i> Port</label>
+        <input id="node-input-port" style="width: 60px;" value="1">
+    </div>
+    <div id="form-row-zone" class="form-row">
+        <label for="node-input-zone"><i class="fa fa-sign-out"></i> Zone</label>
+        <input id="node-input-zone" style="width: 60px;" value="1">
+        <span style="padding-left: 10px;">
+            <input id="node-input-allzones" type="checkbox" style="vertical-align: text-bottom; width: auto;">
+            <label for="node-input-allzones">All Zones</label>
+        </span>
+    </div>
+    <div id="form-row-soundsettings" class="form-row" style="padding-top: 10px">
+        <ol id="node-input-soundsettings-list"></ol>
+    </div>
+    <div id="form-row-target" class="form-row">
+        <label for="node-input-target"><i class="fa fa-cog"></i> Target</label>
+        <select id="node-input-target">
+            <option value="soundField">Sound Field</option>
+            <option value="clearAudio">Clear Audio +</option>
+            <option value="nightMode">Night Mode</option>
+            <option value="footballMode">Football Mode</option>
+            <option value="voice">Voice</option>
         </select>
     </div>
 </script>
@@ -71,12 +457,15 @@
     </p>
     <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>payload<span class="property-type">number | object</span></dt>
-        <dd>the argument(s) of the command.</dd>
         <dt class="optional">command<span class="property-type">string</span></dt>
         <dd>
-            the command to send to the device (if omitted, the command
-            selected in the configuration of the node is used).
+            the command to send to the device (overwrites the command from the
+            node configuration).
+        </dd>
+        <dt class="optional">payload<span class="property-type">object</span></dt>
+        <dd>
+            the settings of the command (overwrites the settings from the node
+            configuration).
         </dd>
     </dl>
     <h3>Outputs</h3>
@@ -87,9 +476,9 @@
     <h3>Details</h3>
     <p>
         Connect this node with the input of a request node and select a command
-        (alternatively the command can be passed via <code>msg.command</code>).
-        Some commands need further arguments which have to be passed through
-        <code>msg.payload</code>.
+        and if applicable the corresponding settings for the command (alternatively
+        the command and its settings can be passed to the input of the node via
+        <code>msg.command</code> and <code>msg.payload</code> respectively).
     </p>
     <p>
         This node does not cover all aspects of the API, however it makes the

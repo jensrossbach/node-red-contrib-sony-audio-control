@@ -6,6 +6,13 @@ module.exports = function(RED)
 
         this.name = config.name;
         this.command = config.command;
+        this.volume = config.volume;
+        this.relative = config.relative;
+        this.source = config.source;
+        this.zone = config.zone;
+        this.port = config.port;
+        this.soundsettings = config.soundsettings;
+        this.target = config.target;
 
         function setPowerStatus(status)
         {
@@ -15,21 +22,21 @@ module.exports = function(RED)
                     payload: [{status: status}]};
         }
 
-        function setAudioVolume(volume, step = 0, zone = null)
+        function setAudioVolume(volume, relative = false, zone = 0)
         {
             return {service: "audio",
                     method: "setAudioVolume",
                     version: "1.1",
-                    payload: [{output: (zone !== null) ? "extOutput:zone?zone=" + zone : "",
-                               volume: (step > 0) ? "+" + step : (step < 0) ? step.toString() : volume.toString()}]};
+                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
+                               volume: (relative && (volume > 0)) ? "+" + volume : volume.toString()}]};
         }
 
-        function setAudioMute(mute, zone = null)
+        function setAudioMute(mute, zone = 0)
         {
             return {service: "audio",
                     method: "setAudioMute",
                     version: "1.1",
-                    payload: [{output: (zone !== null) ? "extOutput:zone?zone=" + zone : "",
+                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
                                mute: mute}]};
         }
 
@@ -41,10 +48,10 @@ module.exports = function(RED)
                     payload: [{settings: params}]};
         }
 
-        function setPlayContent(type, source, port = null)
+        function setPlayContent(source, port = 0, zone = 0)
         {
-            var uri = type + ":" + source;
-            if (port !== null)
+            var uri = source;
+            if ((source == "extInput:hdmi") && (port > 0))
             {
                 uri += "?port=" + port;
             }
@@ -52,7 +59,8 @@ module.exports = function(RED)
             return {service: "avContent",
                     method: "setPlayContent",
                     version: "1.2",
-                    payload: [{uri: uri}]};
+                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
+                               uri: uri}]};
         }
 
         function getPowerStatus()
@@ -63,20 +71,20 @@ module.exports = function(RED)
                     payload: []};
         }
 
-        function getPlayingContentInfo()
+        function getPlayingContentInfo(zone = 0)
         {
             return {service: "avContent",
                     method: "getPlayingContentInfo",
                     version: "1.2",
-                    payload: [{}]};
+                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}]};
         }
 
-        function getVolumeInfo(zone = null)
+        function getVolumeInfo(zone = 0)
         {
             return {service: "audio",
                     method: "getVolumeInformation",
                     version: "1.1",
-                    payload: [{output: (zone !== null) ? "extOutput:zone?zone=" + zone : ""}]};
+                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}]};
         }
 
         function getSoundSettings(target)
@@ -92,7 +100,7 @@ module.exports = function(RED)
         {
             this.on("input", function(msg)
             {
-                var cmd = (("command" in msg) && (typeof msg.command == "string")) ? msg.command : this.command;
+                var cmd = (typeof msg.command == "string") ? msg.command : this.command;
 
                 switch (cmd)
                 {
@@ -113,112 +121,116 @@ module.exports = function(RED)
                     }
                     case "setVolume":
                     {
-                        if (typeof msg.payload == "number")
-                        {
-                            this.send(setAudioVolume(msg.payload));
-                        }
-                        else if (typeof msg.payload == "object")
-                        {
-                            let volume = -1;
-                            let step = 0;
-                            let zone = null;
+                        let args = {volume: this.volume,
+                                    relativeVolume: this.relative,
+                                    zone: this.zone};
 
-                            if (typeof msg.payload.step == "number")
+                        if (typeof msg.payload == "object")
+                        {
+                            if (typeof msg.payload.volume == "number")
                             {
-                                step = msg.payload.step;
+                                args.volume = msg.payload.volume;
                             }
-                            else if (typeof msg.payload.volume == "number")
+
+                            if (typeof msg.payload.relativeVolume == "boolean")
                             {
-                                volume = msg.payload.volume;
+                                args.relativeVolume = msg.payload.relativeVolume;
                             }
 
                             if (typeof msg.payload.zone == "number")
                             {
-                                zone = msg.payload.zone;
+                                args.zone = msg.payload.zone;
                             }
 
-                            if ((volume >= 0) || (step != 0))
-                            {
-                                this.send(setAudioVolume(volume, step, zone));
-                            }
-                            else
+                            if ((args.relativeVolume && (args.volume == 0)) ||
+                                (!args.relativeVolume && (args.volume < 0)))
                             {
                                 let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
                                 this.send(errMsg);
+
+                                break;
                             }
                         }
-                        else
-                        {
-                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
-                            this.send(errMsg);
-                        }
 
+                        this.send(setAudioVolume(args.volume, args.relativeVolume, args.zone));
                         break;
                     }
                     case "mute":
                     {
-                        if (typeof msg.payload == "number")
+                        let args = {zone: this.zone};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.zone == "number"))
                         {
-                            this.send(setAudioMute("on", msg.payload));
-                        }
-                        else
-                        {
-                            this.send(setAudioMute("on"));
+                            args.zone = msg.payload.zone;
                         }
 
+                        this.send(setAudioMute("on", args.zone));
                         break;
                     }
                     case "unmute":
                     {
-                        if (typeof msg.payload == "number")
+                        let args = {zone: this.zone};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.zone == "number"))
                         {
-                            this.send(setAudioMute("off", msg.payload));
-                        }
-                        else
-                        {
-                            this.send(setAudioMute("off"));
+                            args.zone = msg.payload.zone;
                         }
 
+                        this.send(setAudioMute("off", args.zone));
                         break;
                     }
                     case "toggleMute":
                     {
-                        if (typeof msg.payload == "number")
+                        let args = {zone: this.zone};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.zone == "number"))
                         {
-                            this.send(setAudioMute("toggle", msg.payload));
-                        }
-                        else
-                        {
-                            this.send(setAudioMute("toggle"));
+                            args.zone = msg.payload.zone;
                         }
 
+                        this.send(setAudioMute("toggle", args.zone));
                         break;
                     }
                     case "setSoundSettings":
                     {
-                        this.send(setSoundSettings(msg.payload));
+                        let args = {soundSettings: this.soundsettings};
+                        if ((typeof msg.payload == "object") &&
+                            Array.isArray(msg.payload.soundSettings))
+                        {
+                            args.soundSettings = msg.payload.soundSettings;
+                        }
+
+                        this.send(setSoundSettings(args.soundSettings));
                         break;
                     }
                     case "setSource":
                     {
-                        if ((typeof msg.payload == "object") &&
-                            (typeof msg.payload.type == "string") &&
-                            (typeof msg.payload.source == "string"))
+                        let args = {source: this.source,
+                                    port: this.port,
+                                    zone: this.zone};
+
+                        if (typeof msg.payload == "object")
                         {
-                            let port = null;
-                            if (typeof msg.payload.port == "number")
+                            if (typeof msg.payload.source == "string")
                             {
-                                port = msg.payload.port
+                                args.source = msg.payload.source;
                             }
 
-                            this.send(setPlayContent(msg.payload.type, msg.payload.source, port));
-                        }
-                        else
-                        {
-                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
-                            this.send(errMsg);
+                            if (typeof msg.payload.port == "number")
+                            {
+                                args.port = msg.payload.port
+                            }
+
+                            if (typeof msg.payload.zone == "number")
+                            {
+                                args.zone = msg.payload.zone;
+                            }
                         }
 
+                        this.send(setPlayContent(args.source, args.port, args.zone));
                         break;
                     }
                     case "getPowerStatus":
@@ -228,34 +240,41 @@ module.exports = function(RED)
                     }
                     case "getSource":
                     {
-                        this.send(getPlayingContentInfo());
+                        let args = {zone: this.zone};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.zone == "number"))
+                        {
+                            args.zone = msg.payload.zone;
+                        }
+
+                        this.send(getPlayingContentInfo(args.zone));
                         break;
                     }
                     case "getVolumeInfo":
                     {
-                        if (typeof msg.payload == "number")
+                        let args = {zone: this.zone};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.zone == "number"))
                         {
-                            this.send(getVolumeInfo(msg.payload));
-                        }
-                        else
-                        {
-                            this.send(getVolumeInfo());
+                            args.zone = msg.payload.zone;
                         }
 
+                        this.send(getVolumeInfo(args.zone));
                         break;
                     }
                     case "getSoundSettings":
                     {
-                        if (typeof msg.payload == "string")
+                        let args = {target: this.target};
+
+                        if ((typeof msg.payload == "object") &&
+                            (typeof msg.payload.target == "string"))
                         {
-                            this.send(getSoundSettings(msg.payload));
-                        }
-                        else
-                        {
-                            let errMsg = {method: "_passthrough", payload: {error: 32768, description: "Invalid node input"}};
-                            this.send(errMsg);
+                            args.target = msg.payload.target;
                         }
 
+                        this.send(getSoundSettings(args.target));
                         break;
                     }
                     default:

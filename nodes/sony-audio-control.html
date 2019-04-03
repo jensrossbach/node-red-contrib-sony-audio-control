@@ -379,22 +379,24 @@
     <div class="form-row">
         <label for="node-input-command"><i class="fa fa-play-circle"></i> Command</label>
         <select id="node-input-command">
-            <optgroup label="Set Commands">
+            <optgroup label="System">
+                <option value="getPowerStatus">Get Power Status</option>
                 <option value="powerOn">Power ON</option>
                 <option value="powerOff">Power OFF</option>
                 <option value="standby">Standby</option>
-                <option value="setSource">Set Source</option>
+            </optgroup>
+            <optgroup label="Audio">
+                <option value="getVolumeInfo">Get Volume Information</option>
                 <option value="setVolume">Set Volume</option>
                 <option value="mute">Mute</option>
                 <option value="unmute">Unmute</option>
                 <option value="toggleMute">Toggle Mute</option>
+                <option value="getSoundSettings">Get Sound Settings</option>
                 <option value="setSoundSettings">Set Sound Settings</option>
             </optgroup>
-            <optgroup label="Get Commands">
-                <option value="getPowerStatus">Get Power Status</option>
+            <optgroup label="A/V Content">
                 <option value="getSource">Get Source</option>
-                <option value="getVolumeInfo">Get Volume Information</option>
-                <option value="getSoundSettings">Get Sound Settings</option>
+                <option value="setSource">Set Source</option>
             </optgroup>
         </select>
     </div>

@@ -214,9 +214,10 @@ module.exports = function(RED)
 
                         if (typeof msg.payload == "object")
                         {
-                            if (typeof msg.payload.source == "string")
+                            if ((typeof msg.payload.type == "string") &&
+                                (typeof msg.payload.source == "string"))
                             {
-                                args.source = msg.payload.source;
+                                args.source = msg.payload.type + ":" + msg.payload.source;
                             }
 
                             if (typeof msg.payload.port == "number")

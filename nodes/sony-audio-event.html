@@ -9,7 +9,7 @@
         paletteLabel: "event",
         label: function()
         {
-            return (this.name || "event: " + this.event);
+            return (this.name || "event: " + this.service);
         },
         labelStyle: function()
         {
@@ -26,15 +26,99 @@
                 value: "",
                 type:  "sony-audio-device"
             },
-            event:
+            service:
             {
-                value: "any"
+                value: "system"
+            },
+            notifyPowerStatus:
+            {
+                value:    true
+            },
+            notifyStorageStatus:
+            {
+                value:    true
+            },
+            notifySettingsUpdate:
+            {
+                value:    true
+            },
+            notifySWUpdateInfo:
+            {
+                value:    true
+            },
+            notifyVolumeInformation:
+            {
+                value:    true
+            },
+            notifyExternalTerminalStatus:
+            {
+                value:    true
+            },
+            notifyAvailablePlaybackFunction:
+            {
+                value:    true
+            },
+            notifyPlayingContentInfo:
+            {
+                value:    true
             }
+        },
+        oneditprepare: function()
+        {
+            var serviceSelect = $("#node-input-service");
+
+            serviceSelect.change(function()
+            {
+                $("#form-row-system").hide();
+                $("#form-row-audio").hide();
+                $("#form-row-avcontent").hide();
+
+                var value = $(this).val();
+                switch (value)
+                {
+                    case "system":
+                    {
+                        $("#form-row-system").show();
+                        break;
+                    }
+                    case "audio":
+                    {
+                        $("#form-row-audio").show();
+                        break;
+                    }
+                    case "avContent":
+                    {
+                        $("#form-row-avcontent").show();
+                        break;
+                    }
+                }
+            });
+
+            serviceSelect.change();
         }
     });
 </script>
 
 <script type="text/x-red" data-template-name="sony-audio-event">
+    <style>
+        .form-checkbox-row
+        {
+            float:        left;
+            padding-left: 4px;
+        }
+
+        .form-checkbox-label
+        {
+            padding-left: 10px;
+        }
+
+        input[type=checkbox]
+        {
+            vertical-align: text-bottom;
+            float:          left;
+            width:          auto;
+        }
+    </style>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -44,18 +128,53 @@
         <input type="text" id="node-input-device" placeholder="Device">
     </div>
     <div class="form-row">
-        <label for="node-input-event"><i class="fa fa-calendar-o"></i> Event</label>
-        <select id="node-input-event">
-            <option value="any">Any</option>
-            <option value="notifyPowerStatus">Power Status</option>
-            <option value="notifyStorageStatus">Storage Status</option>
-            <option value="notifySettingsUpdate">Settings Update</option>
-            <option value="notifySWUpdateInfo">Software Update Information</option>
-            <option value="notifyVolumeInformation">Volume Information</option>
-            <option value="notifyExternalTerminalStatus">External Terminal Status</option>
-            <option value="notifyAvailablePlaybackFunction">Available Playback Function</option>
-            <option value="notifyPlayingContentInfo">Playing Content Information</option>
+        <label for="node-input-service"><i class="fa fa-wrench"></i> Service</label>
+        <select id="node-input-service">
+            <option value="system">System</option>
+            <option value="audio">Audio</option>
+            <option value="avContent">A/V Content</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label style="float: left;"><i class="fa fa-calendar-o"></i> Events</label>
+        <div id="form-row-system" class="form-checkbox-row">
+            <div>
+                <input type="checkbox" id="node-input-notifyPowerStatus">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifyPowerStatus">Power Status</label>
+            </div>
+            <div>
+                <input type="checkbox" id="node-input-notifyStorageStatus">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifyStorageStatus">Storage Status</label>
+            </div>
+            <div>
+                <input type="checkbox" id="node-input-notifySettingsUpdate">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifySettingsUpdate">Settings Update</label>
+            </div>
+            <div>
+                <input type="checkbox" id="node-input-notifySWUpdateInfo">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifySWUpdateInfo">Software Update Information</label>
+            </div>
+        </div>
+        <div id="form-row-audio" class="form-checkbox-row">
+            <div>
+                <input type="checkbox" id="node-input-notifyVolumeInformation">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifyPowerStatus">Volume Information</label>
+            </div>
+        </div>
+        <div id="form-row-avcontent" class="form-checkbox-row">
+            <div>
+                <input type="checkbox" id="node-input-notifyExternalTerminalStatus">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifyPowerStatus">External Terminal Status</label>
+            </div>
+            <div>
+                <input type="checkbox" id="node-input-notifyAvailablePlaybackFunction">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifyStorageStatus">Available Playback Function</label>
+            </div>
+            <div>
+                <input type="checkbox" id="node-input-notifyPlayingContentInfo">
+                <label class="form-checkbox-label" style="width: auto;" for="node-input-notifySettingsUpdate">Playing Content Information</label>
+            </div>
+        </div>
     </div>
 </script>
 
@@ -73,7 +192,7 @@
     <h3>Details</h3>
     <p>
         This node listens for events and sends the event data (API method, API
-        version and event arguments) to its output. The event arguments are in
+        version and event parameters) to its output. The event parameters are in
         the format as they come from the device.
     </p>
     <p>
@@ -81,4 +200,8 @@
         the node should notify all subscribed events (see also event subscription
         settings in the configuration node).
     </p>
+    <p>
+        You can use the filter node to filter the event output for certain data,
+        please check the documentation of that node.
+    <p>
 </script>

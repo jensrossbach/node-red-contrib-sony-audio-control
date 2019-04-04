@@ -3,7 +3,7 @@
     "description": "Node-RED nodes for accessing Sony Audio Control API",
     "version": "0.0.2",
     "author": "Jens Rossbach",
-    "license": "ISC",
+    "license": "MIT",
     "keywords": [
         "node-red",
         "sony",

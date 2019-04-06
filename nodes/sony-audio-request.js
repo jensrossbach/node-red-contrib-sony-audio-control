@@ -78,7 +78,8 @@ module.exports = function(RED)
                         let respMsg = {service: msg.service,
                                        method: msg.method,
                                        version: msg.version,
-                                       payload: error};
+                                       payload: {error: 32770,
+                                                 description: error}};
 
                         this.send([null, respMsg]);
                     });

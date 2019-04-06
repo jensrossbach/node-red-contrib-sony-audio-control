@@ -104,17 +104,45 @@ module.exports = function(RED)
 
                                 break;
                             }
-                            case "volume":
+                            case "absoluteVolume":
                             {
                                 if (msg.payload != null)
                                 {
                                     if (msg.method == "getVolumeInformation")
                                     {
-                                        outputs[i] = {payload: msg.payload[0].volume};
+                                        if (msg.payload[0].volume >= 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload[0].volume};
+                                        }
                                     }
                                     else if (msg.method == "notifyVolumeInformation")
                                     {
-                                        outputs[i] = {payload: msg.payload.volume};
+                                        if (msg.payload.volume >= 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload.volume};
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "relativeVolume":
+                            {
+                                if (msg.payload != null)
+                                {
+                                    if (msg.method == "getVolumeInformation")
+                                    {
+                                        if (msg.payload[0].step != 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload[0].step};
+                                        }
+                                    }
+                                    else if (msg.method == "notifyVolumeInformation")
+                                    {
+                                        if (msg.payload.step != 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload.step};
+                                        }
                                     }
                                 }
 

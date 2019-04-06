@@ -123,7 +123,8 @@ module.exports = function(RED)
                             {
                                 node.debug("Event for " + msg.method + " received");
 
-                                let outmsg = {method: msg.method,
+                                let outmsg = {service: node.service,
+                                              method: msg.method,
                                               version: msg.version,
                                               payload: (msg.params.length == 0) ? null : msg.params[0]};
 

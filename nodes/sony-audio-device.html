@@ -26,10 +26,10 @@ SOFTWARE.
     RED.nodes.registerType("sony-audio-device",
     {
         category: "config",
-        color:    "#2DABCE",
+        icon:     "sony.png",
         label: function()
         {
-            return (this.name || "Sony Audio API device");
+            return (this.name || this.host + ":" + this.port);
         },
         defaults:
         {

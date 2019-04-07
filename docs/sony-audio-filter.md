@@ -13,6 +13,7 @@ The filter node expects the output messages from a request node or an event node
 The filter node has a variable number of outputs which is determined by the number of configured filters. Each filter gets a dedicated output assigned. When there is an input message arriving and a filter matches the input (i.e. it can handle the method of the input message), it will process the message and send a filtered message on its dedicated output. If multiple filters match the input, there will be multiple output messages sent. The filtered data in contained in the `msg.payload` of the output messages.
 
 The following table lists the payload formats for the different filters:
+
 |Filter         |Format         |Description                                            |
 |---------------|---------------|-------------------------------------------------------|
 |Powered        |Boolean        |True if device is powered on, false otherwise          |
@@ -25,6 +26,7 @@ The following table lists the payload formats for the different filters:
 
 ### Source
 The source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
+
 |type    |source  |port    |
 |--------|--------|--------|
 |extInput|tv      |        |
@@ -43,6 +45,7 @@ The source is provided via the properties `type`, `source` and `port`. The latte
 
 ### Sound Settings
 Depending on the selected sound setting, the output format is like described in below table:
+
 |Sound Setting|Format |Description                                         |
 |-------------|-------|----------------------------------------------------|
 |Sound Field  |String |The name of the Sound Field setting                 |

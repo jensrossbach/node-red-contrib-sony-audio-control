@@ -13,6 +13,7 @@ The input message of the request node must contain the three properties `msg.ser
 The request node provides two outputs. The first output contains the result of the request in the `msg.payload`. A message is only sent on success. The encapsulating array as coming from the device is already removed, so the payload is either an object with the result properties or an array in case a list of properties is returned. For the case that the request has no response parameters (empty result), the payload will be `null`. The second output sends a message with the error details in case the request failed. The information is provided in the `msg.payload` which is an object with the properties `error` containing the error code and `description` containing a human readable description of the error.
 
 The error codes are defined by the Sony Audio Control API, however some node related error might also occur:
+
 |Error Code|Description                                |
 |----------|-------------------------------------------|
 |32568     |Invalid node input                         |

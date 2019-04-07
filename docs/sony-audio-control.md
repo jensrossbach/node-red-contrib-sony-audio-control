@@ -7,6 +7,7 @@ The control node of the Node-RED Sony Audio Control node collection supports the
 In the configuration page of the node, you can choose the name of the node (if no name is provided, the default name will be "control: _command_"). Additionally the command can be chosen which will be executed unless it is overwritten by the input message. Depending on the selected command, different settings may be configured. Also here applies that parameters from the input message might (partly) overwrite the chosen settings.
 
 The following commands can be configured. The table shows also how they map to the commands that can be specified via the input message.
+
 |Configuration         |Command         |Description                                                                     |
 |----------------------|----------------|--------------------------------------------------------------------------------|
 |Get Power Status      |getPowerStatus  |Retrieve current power status of the device                                     |
@@ -24,6 +25,7 @@ The following commands can be configured. The table shows also how they map to t
 |Set Sound Settings    |setSoundSettings|Set sound settings on the device                                                |
 
 The next table shows the mapping from configuration settings to settings which can be provided via the input message.
+
 |Configuration         |Setting       |
 |----------------------|--------------|
 |Source                |type, source  |
@@ -43,6 +45,7 @@ The input of the control node is used to trigger an action on one side and can b
 The command of the request can overwritten by specifying it in the `msg.command` argument of the input message. Command settings (e.g. the volume of a `setVolume` command) can be overwritten by adding them to the `msg.payload` argument of the input message. You can overwrite all command settings or only some of them. All settings which are not specified in the input message will be taken from the node configuration. The `msg.payload` paramter must be an object with one property for each command setting.
 
 The following properties are defined:
+
 |Property      |Applicable to Command|Type        |Description                                                                                |
 |--------------|----------------     |------------|-------------------------------------------------------------------------------------------|
 |type          |setSource            |String      |The type of the source to be activated                                                     |
@@ -56,6 +59,7 @@ The following properties are defined:
 
 ### Source
 The source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
+
 |type    |source  |port    |
 |--------|--------|--------|
 |extInput|tv      |        |
@@ -74,6 +78,7 @@ The source can be specified via the properties `type`, `source` and `port`. The 
 
 ### Sound Settings
 The sound settings can be specified via property `soundSettings` which is an array of objects each consisting of the properties `target` and `value`. The following combinations are possible:
+
 |target      |value     |
 |------------|----------|
 |soundField  |off       |

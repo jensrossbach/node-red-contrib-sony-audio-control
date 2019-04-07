@@ -74,14 +74,9 @@ SOFTWARE.
             {
                 value: ""
             },
-            device:
-            {
-                value: "",
-                type:  "sony-audio-device"
-            },
             filters:
             {
-                value: [{filter: "powered"}]
+                value: [{name: "powered"}]
             },
             outputs:
             {
@@ -197,10 +192,6 @@ SOFTWARE.
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-device"><i class="fa fa-cog"></i> Device</label>
-        <input type="text" id="node-input-device" placeholder="Device">
     </div>
     <div class="form-row" style="padding-top: 10px">
         <label for="node-input-filter-list"><i class="fa fa-filter"></i> Filters</label>

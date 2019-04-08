@@ -6,7 +6,7 @@ With these nodes you can connect to your Sony audio devices and send control com
 ![Sony Audio Control](docs/images/sony_audio_control.png)
 
 ## Usage
-Please read the [online documentation](docs/README.md) for a detailed description on how to setup and use the nodes.
+Please read the [online documentation](https://github.com/jensrossbach/node-red-contrib-sony-audio-control/blob/master/docs/README.md) for a detailed description on how to setup and use the nodes.
 
 ## Sony Trademark
 The trademark "SONY" and any other product names, service names or logos of SONY used, quoted and/or referenced in this Web Site are trademarks or registered trademarks of Sony Corporation or any of its affiliates.

@@ -203,9 +203,13 @@ SOFTWARE.
 </script>
 
 <script type="text/x-red" data-help-name="sony-audio-event">
-    <p>Notifies an event from a Sony audio device.</p>
+    <p>
+        Notifies an event from a Sony audio device via the Sony Audio Control API.
+    </p>
     <h3>Outputs</h3>
     <dl class="message-properties">
+        <dt>service<span class="property-type">string</span></dt>
+        <dd>the API service of the event.</dd>
         <dt>method<span class="property-type">string</span></dt>
         <dd>the API method of the event.</dd>
         <dt>version<span class="property-type">string</span></dt>
@@ -215,14 +219,12 @@ SOFTWARE.
     </dl>
     <h3>Details</h3>
     <p>
-        This node listens for events and sends the event data (API method, API
-        version and event parameters) to its output. The event parameters are in
-        the format as they come from the device.
+        This node listens for events and sends the event parameters to its output.
+        The supplied data is in the format as it comes from the device.
     </p>
     <p>
-        Please choose an event you want to get notified for or select "Any" if
-        the node should notify all subscribed events (see also event subscription
-        settings in the configuration node).
+        Please choose the service for the events you want to get notified and
+        select one or more corresponding events to subscribe for.
     </p>
     <p>
         You can use the filter node to filter the event output for certain data,

@@ -8,57 +8,55 @@ In the configuration page of the node, you can choose the name of the node (if n
 
 The following commands can be configured. The table shows also how they map to the commands that can be specified via the input message.
 
-|Configuration         |Command         |Description                                                                     |
-|----------------------|----------------|--------------------------------------------------------------------------------|
-|Get Power Status      |getPowerStatus  |Retrieve current power status of the device                                     |
-|Power ON              |powerOn         |Switch on power of the device                                                   |
-|Power OFF             |powerOff        |Switch off power of the device (device is not controllable via network anymore!)|
-|Standby               |standby         |Switch the device into standby mode                                             |
-|Get Source            |getSource       |Retrieve the currently active source on the device                              |
-|Set Source            |setSource       |Set currently active source                                                     |
-|Get Volume Information|getVolumeInfo   |Retrieve information about current volume and mute state                        |
-|Set Volume            |setVolume       |Set current volume                                                              |
-|Mute                  |mute            |Mute the audio output                                                           |
-|Unmute                |unmute          |Unmute the audio output                                                         |
-|Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                                   |
-|Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                                   |
-|Set Sound Settings    |setSoundSettings|Set sound settings on the device                                                |
+|Configuration         |Command         |Description                                                                  |
+|----------------------|----------------|-----------------------------------------------------------------------------|
+|Get Power Status      |getPowerStatus  |Retrieve current power status of the device                                  |
+|Power ON              |powerOn         |Switch on power of the device                                                |
+|Power OFF             |powerOff        |Switch off power of the device (device is not reachable via network anymore!)|
+|Standby               |standby         |Switch the device into standby mode                                          |
+|Get Source            |getSource       |Retrieve the currently active audio source on the device                     |
+|Set Source            |setSource       |Set the currently active audio source                                        |
+|Get Volume Information|getVolumeInfo   |Retrieve information about current volume and mute state                     |
+|Set Volume            |setVolume       |Set current volume                                                           |
+|Mute                  |mute            |Mute the audio output                                                        |
+|Unmute                |unmute          |Unmute the audio output                                                      |
+|Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                                |
+|Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                                |
+|Set Sound Settings    |setSoundSettings|Set sound settings on the device                                             |
 
-The next table shows the mapping from configuration settings to settings which can be provided via the input message.
+Below table shows the mapping from configuration settings to settings which can be provided via the input message. See next chapter for more information about overwriting settings via the input message.
 
-|Configuration         |Setting       |
-|----------------------|--------------|
-|Source                |type, source  |
-|Port                  |port          |
-|Volume                |volume        |
-|Relative Volume       |relativeVolume|
-|List of Sound Settings|soundSettings |
-|Target                |target        |
-|Zone                  |zone          |
+|Configuration                     |Setting       |
+|----------------------------------|--------------|
+|Source                            |type, source  |
+|Port                              |port          |
+|Volume                            |volume        |
+|Relative Volume                   |relativeVolume|
+|List of Sound Settings<sup>1</sup>|soundSettings |
+|Target                            |target        |
+|Zone                              |zone          |
 
-### Sound Settings
-The list of sound settings is a list where you can add new rows each representing a sound setting. You can choose the setting from the dropdown box and then depending on the selected setting, either turn the setting on or off, or select the setting's value from a second dropdown box.
+<sup>1</sup> The list of sound settings is a list where you can add new rows each representing a sound setting. You can choose the setting from the dropdown box and then depending on the selected setting, either turn the setting on or off, or select the setting's value from a second dropdown box.
 
 ## Input
 The input of the control node is used to trigger an action on one side and can be utilized to overwrite the command and its settings (or a part of them) from the configurations page on the other side.
 
-The command of the request can overwritten by specifying it in the `msg.command` argument of the input message. Command settings (e.g. the volume of a `setVolume` command) can be overwritten by adding them to the `msg.payload` argument of the input message. You can overwrite all command settings or only some of them. All settings which are not specified in the input message will be taken from the node configuration. The `msg.payload` paramter must be an object with one property for each command setting.
+The command of the request can be overwritten by specifying it in the `msg.command` argument of the input message. Command settings (for instance the volume of a `setVolume` command) can be overwritten by adding them to the `msg.payload` argument of the input message. You can overwrite all command settings or only some of them. All settings which are not specified in the input message will be taken from the node configuration. The `msg.payload` parameter must be an object with one property for each command setting.
 
 The following properties are defined:
 
 |Property      |Applicable to Command|Type        |Description                                                                                |
 |--------------|----------------     |------------|-------------------------------------------------------------------------------------------|
-|type          |setSource            |String      |The type of the source to be activated                                                     |
-|source        |setSource            |String      |The source to be activated                                                                 |
-|port          |setSource            |Number [1-9]|The port for an HDMI input                                                                 |
+|type<sup>1</sup>|setSource          |String      |The type of the audio source to be activated                                               |
+|source<sup>1</sup>|setSource        |String      |The audio source to be activated                                                           |
+|port<sup>1</sup>|setSource          |Number [1-9]|The port for an HDMI input                                                                 |
 |volume        |setVolume            |Number      |The volume to set, can either be an absolute volume (>= 0) or a relative volume step (!= 0)|
 |relativeVolume|setVolume            |Boolean     |True if the provided volume is a relative volume step, false otherwise                     |
-|soundSettings |setSoundSettings     |Array       |The sound settings to be activated, see below for more details                             |
-|target        |getSoundSettings     |String      |The sound setting to retrieve, see below for more details                                  |
-|zone          |setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute|Number [1-9]|The ouput zone of the device            |
+|soundSettings<sup>2</sup>|setSoundSettings|Array |The sound settings to be activated                                                         |
+|target        |getSoundSettings     |String      |The sound setting to retrieve                                                              |
+|zone<sup>3</sup>|setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute|Number [0-9]|The ouput zone of the device          |
 
-### Source
-The source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
+<sup>1</sup> The audio source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
 
 |type    |source  |port    |
 |--------|--------|--------|
@@ -76,8 +74,7 @@ The source can be specified via the properties `type`, `source` and `port`. The 
 |dlna    |music   |        |
 |radio   |fm      |        |
 
-### Sound Settings
-The sound settings can be specified via property `soundSettings` which is an array of objects each consisting of the properties `target` and `value`. The following combinations are possible:
+<sup>2</sup> The sound settings can be specified via property `soundSettings` which is an array of objects each consisting of the properties `target` and `value`. The following combinations are possible:
 
 |target      |value     |
 |------------|----------|
@@ -97,6 +94,8 @@ The sound settings can be specified via property `soundSettings` which is an arr
 |voice       |type1     |
 |voice       |type2     |
 |voice       |type3     |
+
+<sup>3</sup> Setting `zone` to 0 means that all output zones are affected.
 
 ## License
 Copyright (c) 2019 Jens-Uwe Rossbach

@@ -29,14 +29,13 @@ SOFTWARE.
         icon:     "sony.png",
         label: function()
         {
-            return (this.name || this.host + ":" + this.port);
+            return (this.name || this.host);
         },
         defaults:
         {
             name:
             {
-                value:    "",
-                required: true
+                value:    ""
             },
             host:
             {
@@ -47,6 +46,7 @@ SOFTWARE.
             port:
             {
                 value:    "10000",
+                required: true,
                 validate: RED.validators.number()
             }
         }
@@ -82,20 +82,22 @@ SOFTWARE.
 </script>
 
 <script type="text/x-red" data-help-name="sony-audio-device">
-    <p>Configures a Sony audio device.</p>
+    <p>Node to configure a Sony audio device.</p>
     <h3>Details</h3>
-    <ul>
-        <li>
-            <b>Name:</b><br>
-            Specify a name for the configuration.
-        </li>
-        <li>
-            <b>Host:</b><br>
-            Specify the host (IP address or host name) of the device.
-        </li>
-        <li>
-            <b>Port:</b><br>
-            Optionally specify a port for the device.
-        </li>
-    </ul>
+    <p>
+        Please configure the networt parameters of your Sony audio device so
+        that the nodes can connect to it. You can create multiple configuration
+        nodes if you have more than one Sony audio device.
+    <dt>Name</dt>
+    <dd>
+        Optionally specify a name for the configuration.
+    </dd>
+    <dt>Host</dt>
+    <dd>
+        Specify the host (IP address or host name) of the device.
+    </dd>
+    <dt>Port</dt>
+    <dd>
+        Optionally specify a port for the device.
+    </dd>
 </script>

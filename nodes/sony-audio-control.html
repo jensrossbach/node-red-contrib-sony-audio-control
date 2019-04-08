@@ -470,7 +470,7 @@ SOFTWARE.
 
 <script type="text/x-red" data-help-name="sony-audio-control">
     <p>
-        Helper node for creating requests to the Sony Audio Control API.
+        Node for creating requests to the Sony Audio Control API.
     </p>
     <h3>Inputs</h3>
     <dl class="message-properties">
@@ -509,12 +509,57 @@ SOFTWARE.
     <dl>
         <dt>Name</dt>
         <dd>Optionally specify a name for the node.</dd>
-        <dt>Device</dt>
-        <dd>Select the Sony audio device.</dd>
         <dt>Command</dt>
         <dd>
             Select the command to be sent to the device. The selected command
-            can be overwritten by specifying the command in <code>msg.command</code>.
+            can be overwritten via the <code>msg.command</code> property of the
+            input message.
+        </dd>
+        <dt>Source</dt>
+        <dd>
+            Select the source to be activated on the device. The selected source
+            can be overwritten via the <code>msg.payload.type</code> and
+            <code>msg.payload.source</code> properties of the input message.
+        </dd>
+        <dt>Port</dt>
+        <dd>
+            Specify the port for HDMI sources. The value can be overwritten via
+            the <code>msg.payload.port</code> property of the input message.
+        </dd>
+        <dt>Volume</dt>
+        <dd>
+            Specify the volume to set. The value can be overwritten via the
+            <code>msg.payload.volume</code> property of the input message.
+        </dd>
+        <dt>Relative Volume</dt>
+        <dd>
+            If checked, the configured volume is a relative volume step. The flag
+            can be overwritten via the <code>msg.payload.relativeVolume</code>
+            property of the input message.
+        </dd>
+        <dt>Sound Settings List</dt>
+        <dd>
+            Select the sound settings and their values. You can select multiple
+            sound settings by adding additional rows to the list. The selection
+            can be overwritten via the <code>msg.payload.soundSettings</code>
+            array containing the properties <code>target</code> and
+            <code>value</code> for each setting.
+        </dd>
+        <dt>Target</dt>
+        <dd>
+            Select the sound setting to be retrieved. The selected setting
+            can be overwritten via the <code>msg.payload.target</code> property
+            of the input message.
+        </dd>
+        <dt>Zone</dt>
+        <dd>
+            Specify the output zone on the device. The value can be overwritten
+            via the <code>msg.payload.zone</code> property of the input message.
+        </dd>
+        <dt>All Zones</dt>
+        <dd>
+            If checked, the command applies to all output zones. The same can be
+            achieved by setting the <code>msg.payload.zone</code> property to 0.
         </dd>
     </dl>
 </script>

@@ -14,18 +14,17 @@ The filter node has a variable number of outputs which is determined by the numb
 
 The following table lists the payload formats for the different filters:
 
-|Filter         |Format         |Description                                            |
-|---------------|---------------|-------------------------------------------------------|
-|Powered        |Boolean        |True if device is powered on, false otherwise          |
-|Standby        |Boolean        |True if device is in standby, false otherwise          |
-|Source         |Object         |The current source on the device, see below for details|
-|Absolute Volume|Number         |The current absolute volume                            |
-|Relative Volume|Number         |The current relative volume                            |
-|Muted          |Boolean        |True if the audio output is muted, false otherwise     |
-|Sound Setting  |String, Boolean|The current sound setting, see below for details       |
+|Filter                   |Format         |Description                                       |
+|-------------------------|---------------|--------------------------------------------------|
+|Powered                  |Boolean        |True if device is powered on, false otherwise     |
+|Standby                  |Boolean        |True if device is in standby, false otherwise     |
+|Source<sup>1</sup>       |Object         |The current audio source on the device            |
+|Absolute Volume          |Number         |The current absolute volume                       |
+|Relative Volume          |Number         |The current relative volume                       |
+|Muted                    |Boolean        |True if the audio output is muted, false otherwise|
+|Sound Setting<sup>2</sup>|String, Boolean|The current value of the selected sound setting   |
 
-### Source
-The source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
+<sup>1</sup> The audio source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
 
 |type    |source  |port    |
 |--------|--------|--------|
@@ -43,8 +42,7 @@ The source is provided via the properties `type`, `source` and `port`. The latte
 |dlna    |music   |        |
 |radio   |fm      |        |
 
-### Sound Settings
-Depending on the selected sound setting, the output format is like described in below table:
+<sup>2</sup> Depending on the selected sound setting, the output format is like described in below table:
 
 |Sound Setting|Format |Description                                         |
 |-------------|-------|----------------------------------------------------|

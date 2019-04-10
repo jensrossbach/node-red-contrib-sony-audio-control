@@ -6,6 +6,10 @@ The event node of the Node-RED Sony Audio Control node collection is used to fil
 ## Configuration
 In the configuration page of the node, you can choose the name of the node (if no name is provided, the default name will be "filter: _list of filters_"). Additionally there is a list of filters which can be extended or reduced as needed. Use the button under the list to add new filters, use the 'x' button on the right side of each filter to delete it or drag the filter rows to reorder the list. Each filter gets a dedicated output assigned which is indicated on the right side of the filter. Via the dropdown box, you can select the filter, some filters have further selection possibilities.
 
+The powered and standby filters provide an additional checkbox "only if true". If checked, a message is only sent if the `msg.payload` is true. This is most useful when using in combination with an event node and you only want to be triggered if the device actually switched to powered or standby state (without evaluating the result).
+
+The sound settings filter provides an additional dropdown box to select the setting you want to filter for.
+
 ## Input
 The filter node expects the output messages from a request node or an event node as input. It will then process the messages according to the selected filters and produce output messages accordingly.
 
@@ -14,15 +18,15 @@ The filter node has a variable number of outputs which is determined by the numb
 
 The following table lists the payload formats for the different filters:
 
-|Filter                   |Format         |Description                                       |
-|-------------------------|---------------|--------------------------------------------------|
-|Powered                  |Boolean        |True if device is powered on, false otherwise     |
-|Standby                  |Boolean        |True if device is in standby, false otherwise     |
-|Source<sup>1</sup>       |Object         |The current audio source on the device            |
-|Absolute Volume          |Number         |The current absolute volume                       |
-|Relative Volume          |Number         |The current relative volume                       |
-|Muted                    |Boolean        |True if the audio output is muted, false otherwise|
-|Sound Setting<sup>2</sup>|String, Boolean|The current value of the selected sound setting   |
+|Filter                   |Format         |Description                                                       |
+|-------------------------|---------------|------------------------------------------------------------------|
+|Powered                  |Boolean        |True if device is powered on, false if in standby or shutting down|
+|Standby                  |Boolean        |True if device is in standby, false if powered on or shutting down|
+|Source<sup>1</sup>       |Object         |The current audio source on the device                            |
+|Absolute Volume          |Number         |The current absolute volume                                       |
+|Relative Volume          |Number         |The current relative volume                                       |
+|Muted                    |Boolean        |True if the audio output is muted, false otherwise                |
+|Sound Setting<sup>2</sup>|String, Boolean|The current value of the selected sound setting                   |
 
 <sup>1</sup> The audio source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
 

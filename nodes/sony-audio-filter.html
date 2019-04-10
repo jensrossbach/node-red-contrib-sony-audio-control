@@ -106,6 +106,15 @@ SOFTWARE.
                     filterName.append($("<option></option>").val("muted").text("Muted"));
                     filterName.append($("<option></option>").val("sound-setting").text("Sound Setting"));
 
+                    var onlyIfTrueContainer = $("<span/>", {id: "item-elem-onlyiftrue-" + index,
+                                                            style: "padding-left: 10px;"}).appendTo(item);
+                    var onlyIfTrue = $("<input/>", {id: "node-input-filter-onlyiftrue-" + index,
+                                                    class: "node-input-filter-onlyiftrue",
+                                                    type: "checkbox",
+                                                    style: "vertical-align: text-bottom; width: auto;"}).appendTo(onlyIfTrueContainer);
+                    $("<label/>", {for: "node-input-filter-onlyiftrue-" + index,
+                                   style: "padding-left: 4px;"}).text("Only if true").appendTo(onlyIfTrueContainer);
+
                     var soundSettingContainer = $("<span/>", {id: "item-elem-soundsetting-" + index,
                                                               style: "padding-left: 10px;"}).appendTo(item);
                     var soundSetting = $("<select/>", {id: "node-input-soundsetting-" + index,
@@ -123,19 +132,36 @@ SOFTWARE.
                     filterName.change(function()
                     {
                         value = filterName.val();
-                        if (value == "sound-setting")
+
+                        onlyIfTrueContainer.hide();
+                        soundSettingContainer.hide();
+
+                        switch (value)
                         {
-                            soundSettingContainer.show();
-                        }
-                        else
-                        {
-                            soundSettingContainer.hide();
+                            case "powered":
+                            case "standby":
+                            {
+                                onlyIfTrueContainer.show();
+                                break;
+                            }
+                            case "sound-setting":
+                            {
+                                soundSettingContainer.show();
+                                break;
+                            }
                         }
                     });
 
                     if ("args" in filter)
                     {
-                        soundSetting.val(filter.args.setting);
+                        if ("onlyIfTrue" in filter.args)
+                        {
+                            onlyIfTrue.prop("checked", filter.args.onlyIfTrue);
+                        }
+                        else if ("setting" in filter.args)
+                        {
+                            soundSetting.val(filter.args.setting);
+                        }
                     }
 
                     filterName.val(filter.name);
@@ -177,9 +203,20 @@ SOFTWARE.
             filterList.each(function(index)
             {
                 var filter = {name: $(this).find(".node-input-filter-name").val()};
-                if (filter.name == "sound-setting")
+
+                switch (filter.name)
                 {
-                    filter["args"] = {setting: $(this).find(".node-input-filter-soundsetting").val()};
+                    case "powered":
+                    case "standby":
+                    {
+                        filter["args"] = {onlyIfTrue: $(this).find(".node-input-filter-onlyiftrue").prop("checked")};
+                        break;
+                    }
+                    case "sound-setting":
+                    {
+                        filter["args"] = {setting: $(this).find(".node-input-filter-soundsetting").val()};
+                        break;
+                    }
                 }
 
                 node.filters.push(filter);
@@ -215,7 +252,7 @@ SOFTWARE.
     </dl>
     <h3>Outputs</h3>
     <dl class="message-properties">
-        <dt>payload<span class="property-type">bool | number | object</span></dt>
+        <dt>payload<span class="property-type">bool | number | string | object</span></dt>
         <dd>depends on the filter selected for the output.</dd>
     </dl>
     <h3>Details</h3>

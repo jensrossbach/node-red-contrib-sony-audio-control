@@ -49,10 +49,16 @@ module.exports = function(RED)
                         case "powered":
                         {
                             if (((msg.method == "getPowerStatus") ||
-                                    (msg.method == "notifyPowerStatus")) &&
+                                 (msg.method == "notifyPowerStatus")) &&
                                 (msg.payload !== null))
                             {
-                                outputs[i] = {payload: (msg.payload.status == "active")};
+                                let isPowered = (msg.payload.status == "active");
+
+                                if (!this.filters[i].args.onlyIfTrue ||
+                                    (this.filters[i].args.onlyIfTrue && isPowered))
+                                {
+                                    outputs[i] = {payload: isPowered};
+                                }
                             }
 
                             break;
@@ -60,10 +66,16 @@ module.exports = function(RED)
                         case "standby":
                         {
                             if (((msg.method == "getPowerStatus") ||
-                                    (msg.method == "notifyPowerStatus")) &&
+                                 (msg.method == "notifyPowerStatus")) &&
                                 (msg.payload !== null))
                             {
-                                outputs[i] = {payload: (msg.payload.status == "standby")};
+                                let isStandby = (msg.payload.status == "standby");
+
+                                if (!this.filters[i].args.onlyIfTrue ||
+                                    (this.filters[i].args.onlyIfTrue && isStandby))
+                                {
+                                    outputs[i] = {payload: isStandby};
+                                }
                             }
 
                             break;

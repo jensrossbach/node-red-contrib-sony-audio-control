@@ -5,6 +5,24 @@ With these nodes you can connect to your Sony audio devices and send control com
 
 ![Sony Audio Control](images/sony_audio_control.png)
 
+- [Documentation](#documentation)
+  - [Request Node](#request-node)
+    - [Input](#input)
+    - [Outputs](#outputs)
+  - [Event Node](#event-node)
+     - [Configuration](#configuration-1)
+     - [Output](#output)
+  - [Control Node](#control-node)
+    - [Configuration](#configuration-2)
+    - [Input](#input-1)
+    - [Outputs](#outputs-1)
+  - [Filter Node](#filter-node)
+    - [Configuration](#configuration-3)
+    - [Input](#input-2)
+    - [Outputs](#outputs-2)
+- [Sony Trademark](#sony-trademark)
+- [License](#license)
+
 ## Documentation
 The node collection consists of four flow nodes and one configuration node. The configuration node stores the network address of your Sony audio device. You have to specify a host name (or IP address) and the port (by default, port 10000 is used).
 

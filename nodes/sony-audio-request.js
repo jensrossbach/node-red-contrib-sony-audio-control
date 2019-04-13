@@ -26,12 +26,38 @@ module.exports = function(RED)
 {
     const request = require("request-promise");
 
+    const STATUS_SENDING = {fill: "grey",  shape: "dot", text: "sending"};
+    const STATUS_SUCCESS = {fill: "green", shape: "dot", text: "success"};
+    const STATUS_ERROR   = {fill: "red",   shape: "dot", text: "error"  };
+
     function SonyAudioRequestNode(config)
     {
         RED.nodes.createNode(this, config);
 
         this.name = config.name;
         this.device = RED.nodes.getNode(config.device);
+
+        var timeout = null;
+
+        this.setStatus = function(stat, temporary = false)
+        {
+            if (timeout != null)
+            {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+
+            this.status(stat);
+
+            if (temporary)
+            {
+                timeout = setTimeout(() =>
+                {
+                    this.status({});
+                    timeout = null;
+                }, 5000);
+            }
+        }
 
         if (this.device)
         {
@@ -52,6 +78,7 @@ module.exports = function(RED)
                                         version: msg.version,
                                         params: msg.payload}};
 
+                    this.setStatus(STATUS_SENDING);
                     request(req).then(response =>
                     {
                         if ("result" in response)
@@ -62,6 +89,7 @@ module.exports = function(RED)
                                            payload: (response.result.length == 1) ? response.result[0] : null};
 
                             this.send([respMsg, null]);
+                            this.setStatus(STATUS_SUCCESS, true);
                         }
                         else if ("error" in response)
                         {
@@ -72,6 +100,7 @@ module.exports = function(RED)
                                                      description: response.error[1]}};
 
                             this.send([null, respMsg]);
+                            this.setStatus(STATUS_ERROR, true);
                         }
                     }).catch(error =>
                     {
@@ -82,17 +111,20 @@ module.exports = function(RED)
                                                  description: error}};
 
                         this.send([null, respMsg]);
+                        this.setStatus(STATUS_ERROR, true);
                     });
                 }
                 else if (msg.method === "_passthrough")
                 {
                     // just forward the message to the error output
                     this.send([null, msg]);
+                    this.setStatus(STATUS_ERROR, true);
                 }
                 else
                 {
                     let respMsg = {payload: {error: 32768, description: "Invalid node input"}};
                     this.send([null, respMsg]);
+                    this.setStatus(STATUS_ERROR, true);
                 }
             });
         }

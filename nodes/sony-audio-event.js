@@ -27,6 +27,12 @@ module.exports = function(RED)
     const MSG_GET_NOTIFICATIONS = 1;
     const MSG_SET_NOTIFICATIONS = 2;
 
+    const STATUS_UNCONFIGURED = {fill: "yellow", shape: "dot", text: "unconfigured"    };
+    const STATUS_CONNECTING   = {fill: "grey",   shape: "dot", text: "connecting"      };
+    const STATUS_CONNECTED    = {fill: "blue",   shape: "dot", text: "connected"       };
+    const STATUS_READY        = {fill: "green",  shape: "dot", text: "ready"           };
+    const STATUS_ERROR        = {fill: "red",    shape: "dot", text: "connection error"};
+
     const WebSocketClient = require("websocket").client;
 
     function SonyAudioEventNode(config)
@@ -76,6 +82,8 @@ module.exports = function(RED)
 
             this.client.on("connect", function(connection)
             {
+                node.status(STATUS_CONNECTED);
+
                 node.debug("Client connected");
                 node.connection = connection;
 
@@ -114,6 +122,7 @@ module.exports = function(RED)
                             }
                             else if (msg.id == MSG_SET_NOTIFICATIONS)
                             {
+                                node.status(STATUS_READY);
                                 node.debug("Result: " + JSON.stringify(msg.result[0]));
                             }
                         }
@@ -140,11 +149,13 @@ module.exports = function(RED)
 
                 connection.on("error", function(error)
                 {
+                    node.status(STATUS_ERROR);
                     node.warn("Connection error: " + error.toString());
                 });
 
                 connection.on("close", function()
                 {
+                    node.status({});
                     node.debug("Connection closed");
                 });
 
@@ -153,6 +164,7 @@ module.exports = function(RED)
 
             this.client.on("connectFailed", function(error)
             {
+                node.status(STATUS_ERROR);
                 node.warn("Failed to connect to Sony device: " + error.toString());
             });
 
@@ -166,8 +178,13 @@ module.exports = function(RED)
 
             let url = "ws://" + this.device.host + ":" + this.device.port + "/sony/" + this.service;
 
+            this.status(STATUS_CONNECTING);
             this.debug("Connecting to: " + url);
             this.client.connect(url);
+        }
+        else
+        {
+            this.status(STATUS_UNCONFIGURED);
         }
     }
 

@@ -26,9 +26,10 @@ module.exports = function(RED)
 {
     const request = require("request-promise");
 
-    const STATUS_SENDING = {fill: "grey",  shape: "dot", text: "sending"};
-    const STATUS_SUCCESS = {fill: "green", shape: "dot", text: "success"};
-    const STATUS_ERROR   = {fill: "red",   shape: "dot", text: "error"  };
+    const STATUS_UNCONFIGURED = {fill: "yellow", shape: "dot", text: "unconfigured"};
+    const STATUS_SENDING      = {fill: "grey",   shape: "dot", text: "sending"     };
+    const STATUS_SUCCESS      = {fill: "green",  shape: "dot", text: "success"     };
+    const STATUS_ERROR        = {fill: "red",    shape: "dot", text: "error"       };
 
     function SonyAudioRequestNode(config)
     {
@@ -37,24 +38,24 @@ module.exports = function(RED)
         this.name = config.name;
         this.device = RED.nodes.getNode(config.device);
 
-        var timeout = null;
+        this.timeout = null;
 
         this.setStatus = function(stat, temporary = false)
         {
-            if (timeout != null)
+            if (this.timeout != null)
             {
                 clearTimeout(timeout);
-                timeout = null;
+                this.timeout = null;
             }
 
             this.status(stat);
 
             if (temporary)
             {
-                timeout = setTimeout(() =>
+                this.timeout = setTimeout(() =>
                 {
                     this.status({});
-                    timeout = null;
+                    this.timeout = null;
                 }, 5000);
             }
         }
@@ -127,6 +128,19 @@ module.exports = function(RED)
                     this.setStatus(STATUS_ERROR, true);
                 }
             });
+
+            this.on("close", function()
+            {
+                if (this.timeout != null)
+                {
+                    clearTimeout(timeout);
+                    this.timeout = null;
+                }
+            });
+        }
+        else
+        {
+            this.setStatus(STATUS_UNCONFIGURED);
         }
     }
 

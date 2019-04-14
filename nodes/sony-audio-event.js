@@ -28,6 +28,7 @@ module.exports = function(RED)
     const MSG_SET_NOTIFICATIONS = 2;
 
     const STATUS_UNCONFIGURED = {fill: "yellow", shape: "dot", text: "unconfigured"    };
+    const STATUS_NOTCONNECTED = {fill: "grey",   shape: "dot", text: "not connected"   };
     const STATUS_CONNECTING   = {fill: "grey",   shape: "dot", text: "connecting"      };
     const STATUS_CONNECTED    = {fill: "blue",   shape: "dot", text: "connected"       };
     const STATUS_READY        = {fill: "green",  shape: "dot", text: "ready"           };
@@ -155,7 +156,7 @@ module.exports = function(RED)
 
                 connection.on("close", function()
                 {
-                    node.status({});
+                    node.status(STATUS_NOTCONNECTED);
                     node.debug("Connection closed");
                 });
 

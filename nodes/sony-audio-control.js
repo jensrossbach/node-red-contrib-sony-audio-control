@@ -119,6 +119,16 @@ module.exports = function(RED)
                     payload: {target: target}};
         }
 
+        if ((this.command == "setSoundSettings") &&
+            (this.soundsettings.length == 0))
+        {
+            this.status({fill: "yellow", shape: "dot", text: "configuration errors"});
+        }
+        else
+        {
+            this.status({});
+        }
+
         this.on("input", function(msg)
         {
             var cmd = (typeof msg.command == "string") ? msg.command : this.command;

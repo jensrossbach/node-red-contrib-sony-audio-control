@@ -40,7 +40,7 @@ module.exports = function(RED)
 
         this.timeout = null;
 
-        this.setStatus = function(stat, temporary = false)
+        this.setStatus = function(stat = {}, temporary = false)
         {
             if (this.timeout != null)
             {
@@ -62,6 +62,7 @@ module.exports = function(RED)
 
         if (this.device)
         {
+            this.setStatus();
             this.baseURI = "http://" + this.device.host + ":" + this.device.port + "/sony";
 
             this.on("input", function(msg)

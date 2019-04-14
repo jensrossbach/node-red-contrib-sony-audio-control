@@ -5,6 +5,8 @@ With these nodes you can connect to your Sony audio devices and send control com
 
 ![Sony Audio Control](images/sony_audio_control.png)
 
+If you would like to propose a new feature or any kind of improvement or if you want to report a bug, don't hesitate to create an issue in the [issue tracker](https://github.com/jensrossbach/node-red-contrib-sony-audio-control/issues) of the repository on GitHub.
+
 - [Documentation](#documentation)
   - [Request Node](#request-node)
     - [Input](#input)
@@ -121,21 +123,21 @@ The following properties are defined:
 
 <sup>1</sup> The audio source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
 
-|type    |source  |port    |
-|--------|--------|--------|
-|extInput|tv      |        |
-|extInput|sat-catv|        |
-|extInput|hdmi    |[1 .. 9]|
-|extInput|video   |        |
-|extInput|sacd-cd |        |
-|extInput|bd-dvd  |        |
-|extInput|line    |        |
-|extInput|btAudio |        |
-|extInput|game    |        |
-|extInput|source  |        |
-|storage |usb1    |        |
-|dlna    |music   |        |
-|radio   |fm      |        |
+|type    |source  |port |
+|--------|--------|-----|
+|extInput|tv      |     |
+|extInput|sat-catv|     |
+|extInput|hdmi    |[1-9]|
+|extInput|video   |     |
+|extInput|sacd-cd |     |
+|extInput|bd-dvd  |     |
+|extInput|line    |     |
+|extInput|btAudio |     |
+|extInput|game    |     |
+|extInput|source  |     |
+|storage |usb1    |     |
+|dlna    |music   |     |
+|radio   |fm      |     |
 
 <sup>2</sup> The sound settings can be specified via property `soundSettings` which is an array of objects each consisting of the properties `target` and `value`. The following combinations are possible:
 
@@ -195,21 +197,21 @@ The following table lists the payload formats for the different filters:
 
 <sup>1</sup> The audio source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
 
-|type    |source  |port    |
-|--------|--------|--------|
-|extInput|tv      |        |
-|extInput|sat-catv|        |
-|extInput|hdmi    |[1 .. 9]|
-|extInput|video   |        |
-|extInput|sacd-cd |        |
-|extInput|bd-dvd  |        |
-|extInput|line    |        |
-|extInput|btAudio |        |
-|extInput|game    |        |
-|extInput|source  |        |
-|storage |usb1    |        |
-|dlna    |music   |        |
-|radio   |fm      |        |
+|type    |source  |port |
+|--------|--------|-----|
+|extInput|tv      |     |
+|extInput|sat-catv|     |
+|extInput|hdmi    |[1-9]|
+|extInput|video   |     |
+|extInput|sacd-cd |     |
+|extInput|bd-dvd  |     |
+|extInput|line    |     |
+|extInput|btAudio |     |
+|extInput|game    |     |
+|extInput|source  |     |
+|storage |usb1    |     |
+|dlna    |music   |     |
+|radio   |fm      |     |
 
 <sup>2</sup> Depending on the selected sound setting, the output format is like described in below table:
 

@@ -34,197 +34,206 @@ module.exports = function(RED)
         this.filters = config.filters;
         this.outputs = config.outputs;
 
-        this.on("input", msg =>
+        if (this.outputs == 0)
         {
-            if (typeof msg.method == "string")
+            this.status({fill: "red", shape: "dot", text: "no filters"});
+        }
+        else
+        {
+            this.status({});
+
+            this.on("input", msg =>
             {
-                let outputs = [];
-
-                for (i=0; i<this.filters.length; ++i)
+                if (typeof msg.method == "string")
                 {
-                    outputs.push(null);
+                    let outputs = [];
 
-                    switch (this.filters[i].name)
+                    for (i=0; i<this.filters.length; ++i)
                     {
-                        case "powered":
+                        outputs.push(null);
+
+                        switch (this.filters[i].name)
                         {
-                            if (((msg.method == "getPowerStatus") ||
-                                 (msg.method == "notifyPowerStatus")) &&
-                                (msg.payload !== null))
+                            case "powered":
                             {
-                                let isPowered = (msg.payload.status == "active");
-
-                                if (!this.filters[i].args.onlyIfTrue ||
-                                    (this.filters[i].args.onlyIfTrue && isPowered))
+                                if (((msg.method == "getPowerStatus") ||
+                                    (msg.method == "notifyPowerStatus")) &&
+                                    (msg.payload !== null))
                                 {
-                                    outputs[i] = {payload: isPowered};
-                                }
-                            }
+                                    let isPowered = (msg.payload.status == "active");
 
-                            break;
-                        }
-                        case "standby":
-                        {
-                            if (((msg.method == "getPowerStatus") ||
-                                 (msg.method == "notifyPowerStatus")) &&
-                                (msg.payload !== null))
-                            {
-                                let isStandby = (msg.payload.status == "standby");
-
-                                if (!this.filters[i].args.onlyIfTrue ||
-                                    (this.filters[i].args.onlyIfTrue && isStandby))
-                                {
-                                    outputs[i] = {payload: isStandby};
-                                }
-                            }
-
-                            break;
-                        }
-                        case "source":
-                        {
-                            if (msg.payload !== null)
-                            {
-                                let uri = null;
-
-                                if (msg.method == "getPlayingContentInfo")
-                                {
-                                    uri = msg.payload[0].uri;
-                                }
-                                else if (msg.method == "notifyPlayingContentInfo")
-                                {
-                                    uri = msg.payload.uri;
-                                }
-
-                                if (uri !== null)
-                                {
-                                    let matches = uri.match(uriRegEx);
-                                    if (matches !== null)
+                                    if (!this.filters[i].args.onlyIfTrue ||
+                                        (this.filters[i].args.onlyIfTrue && isPowered))
                                     {
-                                        let payload = {type: matches[1], source: matches[2]};
-                                        if (matches[3] != null)
+                                        outputs[i] = {payload: isPowered};
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "standby":
+                            {
+                                if (((msg.method == "getPowerStatus") ||
+                                    (msg.method == "notifyPowerStatus")) &&
+                                    (msg.payload !== null))
+                                {
+                                    let isStandby = (msg.payload.status == "standby");
+
+                                    if (!this.filters[i].args.onlyIfTrue ||
+                                        (this.filters[i].args.onlyIfTrue && isStandby))
+                                    {
+                                        outputs[i] = {payload: isStandby};
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "source":
+                            {
+                                if (msg.payload !== null)
+                                {
+                                    let uri = null;
+
+                                    if (msg.method == "getPlayingContentInfo")
+                                    {
+                                        uri = msg.payload[0].uri;
+                                    }
+                                    else if (msg.method == "notifyPlayingContentInfo")
+                                    {
+                                        uri = msg.payload.uri;
+                                    }
+
+                                    if (uri !== null)
+                                    {
+                                        let matches = uri.match(uriRegEx);
+                                        if (matches !== null)
                                         {
-                                            payload["port"] = Number(matches[3]);
-                                        }
-
-                                        outputs[i] = {payload: payload};
-                                    }
-                                }
-                            }
-
-                            break;
-                        }
-                        case "absoluteVolume":
-                        {
-                            if (msg.payload != null)
-                            {
-                                if (msg.method == "getVolumeInformation")
-                                {
-                                    if (msg.payload[0].volume >= 0)
-                                    {
-                                        outputs[i] = {payload: msg.payload[0].volume};
-                                    }
-                                }
-                                else if (msg.method == "notifyVolumeInformation")
-                                {
-                                    if (msg.payload.volume >= 0)
-                                    {
-                                        outputs[i] = {payload: msg.payload.volume};
-                                    }
-                                }
-                            }
-
-                            break;
-                        }
-                        case "relativeVolume":
-                        {
-                            if (msg.payload != null)
-                            {
-                                if (msg.method == "getVolumeInformation")
-                                {
-                                    if (msg.payload[0].step != 0)
-                                    {
-                                        outputs[i] = {payload: msg.payload[0].step};
-                                    }
-                                }
-                                else if (msg.method == "notifyVolumeInformation")
-                                {
-                                    if (msg.payload.step != 0)
-                                    {
-                                        outputs[i] = {payload: msg.payload.step};
-                                    }
-                                }
-                            }
-
-                            break;
-                        }
-                        case "muted":
-                        {
-                            if (msg.payload !== null)
-                            {
-                                let mute = null;
-
-                                if (msg.method == "getVolumeInformation")
-                                {
-                                    mute = msg.payload[0].mute;
-                                }
-                                else if (msg.method == "notifyVolumeInformation")
-                                {
-                                    mute = msg.payload.mute;
-                                }
-
-                                if ((mute !== null) && (mute != "toggle"))
-                                {
-                                    outputs[i] = {payload: (mute == "on")};
-                                }
-                            }
-
-                            break;
-                        }
-                        case "sound-setting":
-                        {
-                            if ((msg.payload !== null) &&
-                                (msg.method == "getSoundSettings"))
-                            {
-                                for (j=0; j<msg.payload.length; ++j)
-                                {
-                                    let setting =  msg.payload[j];
-
-                                    if (("target" in setting) &&
-                                        ("currentValue" in setting))
-                                    {
-                                        if (setting.target === this.filters[i].args.setting)
-                                        {
-                                            switch (setting.target)
+                                            let payload = {type: matches[1], source: matches[2]};
+                                            if (matches[3] != null)
                                             {
-                                                case "soundField":
-                                                case "voice":
-                                                {
-                                                    outputs[i] = {payload: setting.currentValue};
-                                                    break;
-                                                }
-                                                case "clearAudio":
-                                                case "nightMode":
-                                                case "footballMode":
-                                                {
-                                                    outputs[i] = {payload: (setting.currentValue === "on")};
-                                                    break;
-                                                }
+                                                payload["port"] = Number(matches[3]);
                                             }
 
-                                            break;
+                                            outputs[i] = {payload: payload};
                                         }
                                     }
                                 }
-                            }
 
-                            break;
+                                break;
+                            }
+                            case "absoluteVolume":
+                            {
+                                if (msg.payload != null)
+                                {
+                                    if (msg.method == "getVolumeInformation")
+                                    {
+                                        if (msg.payload[0].volume >= 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload[0].volume};
+                                        }
+                                    }
+                                    else if (msg.method == "notifyVolumeInformation")
+                                    {
+                                        if (msg.payload.volume >= 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload.volume};
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "relativeVolume":
+                            {
+                                if (msg.payload != null)
+                                {
+                                    if (msg.method == "getVolumeInformation")
+                                    {
+                                        if (msg.payload[0].step != 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload[0].step};
+                                        }
+                                    }
+                                    else if (msg.method == "notifyVolumeInformation")
+                                    {
+                                        if (msg.payload.step != 0)
+                                        {
+                                            outputs[i] = {payload: msg.payload.step};
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "muted":
+                            {
+                                if (msg.payload !== null)
+                                {
+                                    let mute = null;
+
+                                    if (msg.method == "getVolumeInformation")
+                                    {
+                                        mute = msg.payload[0].mute;
+                                    }
+                                    else if (msg.method == "notifyVolumeInformation")
+                                    {
+                                        mute = msg.payload.mute;
+                                    }
+
+                                    if ((mute !== null) && (mute != "toggle"))
+                                    {
+                                        outputs[i] = {payload: (mute == "on")};
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "sound-setting":
+                            {
+                                if ((msg.payload !== null) &&
+                                    (msg.method == "getSoundSettings"))
+                                {
+                                    for (j=0; j<msg.payload.length; ++j)
+                                    {
+                                        let setting =  msg.payload[j];
+
+                                        if (("target" in setting) &&
+                                            ("currentValue" in setting))
+                                        {
+                                            if (setting.target === this.filters[i].args.setting)
+                                            {
+                                                switch (setting.target)
+                                                {
+                                                    case "soundField":
+                                                    case "voice":
+                                                    {
+                                                        outputs[i] = {payload: setting.currentValue};
+                                                        break;
+                                                    }
+                                                    case "clearAudio":
+                                                    case "nightMode":
+                                                    case "footballMode":
+                                                    {
+                                                        outputs[i] = {payload: (setting.currentValue === "on")};
+                                                        break;
+                                                    }
+                                                }
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
                         }
                     }
-                }
 
-                this.send(outputs);
-            }
-        });
+                    this.send(outputs);
+                }
+            });
+        }
     }
 
     RED.nodes.registerType("sony-audio-filter", SonyAudioFilterNode);

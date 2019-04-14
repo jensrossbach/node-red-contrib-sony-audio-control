@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2019-04-14
+### Fixed
+- Aligned `msg.payload` format of request node input message with documentation.
+
+> **NOTE**
+>
+> Although this is only a bugfix release, the payload format of the request node
+> input message has been changed. This affects you only if you don't use the
+> control node but use a custom node providing input to the request node. In
+> this case you have to remove the encapsulating array braces around the actual
+> content of the payload and use null as payload for methods without parameters.
+
 ## [1.1.0] - 2019-04-13
 ### Added
 - Added setting "only if true" for powered and standby filters.

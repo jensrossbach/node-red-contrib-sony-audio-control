@@ -43,7 +43,7 @@ module.exports = function(RED)
             return {service: "system",
                     method: "setPowerStatus",
                     version: "1.1",
-                    payload: [{status: status}]};
+                    payload: {status: status}};
         }
 
         function setAudioVolume(volume, relative = false, zone = 0)
@@ -51,8 +51,8 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "setAudioVolume",
                     version: "1.1",
-                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
-                               volume: (relative && (volume > 0)) ? "+" + volume : volume.toString()}]};
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
+                              volume: (relative && (volume > 0)) ? "+" + volume : volume.toString()}};
         }
 
         function setAudioMute(mute, zone = 0)
@@ -60,8 +60,8 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "setAudioMute",
                     version: "1.1",
-                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
-                               mute: mute}]};
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
+                              mute: mute}};
         }
 
         function setSoundSettings(params)
@@ -69,7 +69,7 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "setSoundSettings",
                     version: "1.1",
-                    payload: [{settings: params}]};
+                    payload: {settings: params}};
         }
 
         function setPlayContent(source, port = 0, zone = 0)
@@ -83,8 +83,8 @@ module.exports = function(RED)
             return {service: "avContent",
                     method: "setPlayContent",
                     version: "1.2",
-                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
-                               uri: uri}]};
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : "",
+                              uri: uri}};
         }
 
         function getPowerStatus()
@@ -92,7 +92,7 @@ module.exports = function(RED)
             return {service: "system",
                     method: "getPowerStatus",
                     version: "1.1",
-                    payload: []};
+                    payload: null};
         }
 
         function getPlayingContentInfo(zone = 0)
@@ -100,7 +100,7 @@ module.exports = function(RED)
             return {service: "avContent",
                     method: "getPlayingContentInfo",
                     version: "1.2",
-                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}]};
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
         }
 
         function getVolumeInfo(zone = 0)
@@ -108,7 +108,7 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "getVolumeInformation",
                     version: "1.1",
-                    payload: [{output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}]};
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
         }
 
         function getSoundSettings(target)
@@ -116,7 +116,7 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "getSoundSettings",
                     version: "1.1",
-                    payload: [{target: target}]};
+                    payload: {target: target}};
         }
 
         this.on("input", function(msg)

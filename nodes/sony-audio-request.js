@@ -77,7 +77,7 @@ module.exports = function(RED)
                                  body: {id: 1,
                                         method: msg.method,
                                         version: msg.version,
-                                        params: msg.payload}};
+                                        params: (msg.payload == null) ? [] : [msg.payload]}};
 
                     this.setStatus(STATUS_SENDING);
                     request(req).then(response =>

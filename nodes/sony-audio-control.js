@@ -87,6 +87,47 @@ module.exports = function(RED)
                               uri: uri}};
         }
 
+        function stopPlayingContent(zone = 0)
+        {
+            return {service: "avContent",
+                    method: "stopPlayingContent",
+                    version: "1.1",
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
+        }
+
+        function pausePlayingContent(zone = 0)
+        {
+            return {service: "avContent",
+                    method: "pausePlayingContent",
+                    version: "1.1",
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
+        }
+
+        function setPlayPreviousContent(zone = 0)
+        {
+            return {service: "avContent",
+                    method: "setPlayPreviousContent",
+                    version: "1.0",
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
+        }
+
+        function setPlayNextContent(zone = 0)
+        {
+            return {service: "avContent",
+                    method: "setPlayNextContent",
+                    version: "1.0",
+                    payload: {output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
+        }
+
+        function scanPlayingContent(fwd, zone = 0)
+        {
+            return {service: "avContent",
+                    method: "scanPlayingContent",
+                    version: "1.0",
+                    payload: {direction: fwd ? "fwd" : "bwd",
+                              output: (zone > 0) ? "extOutput:zone?zone=" + zone : ""}};
+        }
+
         function getPowerStatus()
         {
             return {service: "system",
@@ -263,6 +304,84 @@ module.exports = function(RED)
                     }
 
                     this.send(setPlayContent(args.source, args.port, args.zone));
+                    break;
+                }
+                case "stop":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(stopPlayingContent(args.zone));
+                    break;
+                }
+                case "togglePause":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(pausePlayingContent(args.zone));
+                    break;
+                }
+                case "skipPrev":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(setPlayPreviousContent(args.zone));
+                    break;
+                }
+                case "skipNext":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(setPlayNextContent(args.zone));
+                    break;
+                }
+                case "scanBackward":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(scanPlayingContent(false, args.zone));
+                    break;
+                }
+                case "scanForward":
+                {
+                    let args = {zone: this.zone};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.zone == "number"))
+                    {
+                        args.zone = msg.payload.zone;
+                    }
+
+                    this.send(scanPlayingContent(true, args.zone));
                     break;
                 }
                 case "getPowerStatus":

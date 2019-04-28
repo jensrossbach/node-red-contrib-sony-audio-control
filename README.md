@@ -90,6 +90,12 @@ The following commands can be configured. The table shows also how they map to t
 |Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                                |
 |Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                                |
 |Set Sound Settings    |setSoundSettings|Set sound settings on the device                                             |
+|Stop                  |stop            |Stop current audio playback                                                  |
+|Toggle Pause          |togglePause     |Toggle between paused and playing state                                      |
+|Skip Previous         |skipPrev        |Skip to previous or beginning of currently playing content                   |
+|Skip Next             |skipNext        |Skip to next content                                                         |
+|Scan Backward         |scanBackward    |Scan forward in currently playing content                                    |
+|Scan Forward          |scanForward     |Scan backward in currently playing content                                   |
 
 Below table shows the mapping from configuration settings to settings which can be provided via the input message. See next chapter for more information about overwriting settings via the input message.
 
@@ -121,7 +127,7 @@ The following properties are defined:
 |relativeVolume|setVolume            |Boolean     |True if the provided volume is a relative volume step, false otherwise                     |
 |soundSettings<sup>2</sup>|setSoundSettings|Array |The sound settings to be activated                                                         |
 |target        |getSoundSettings     |String      |The sound setting to retrieve                                                              |
-|zone<sup>3</sup>|setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute|Number [0-9]|The ouput zone of the device          |
+|zone<sup>3</sup>|setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute, stop, togglePause, skipPrev, skipNext, scanBackward, scanForward|Number [0-9]|The ouput zone of the device|
 
 <sup>1</sup> The audio source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
 

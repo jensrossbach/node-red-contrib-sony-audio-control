@@ -321,6 +321,12 @@ SOFTWARE.
                     case "toggleMute":
                     case "getSource":
                     case "getVolumeInfo":
+                    case "stop":
+                    case "togglePause":
+                    case "skipPrev":
+                    case "skipNext":
+                    case "scanForward":
+                    case "scanBackward":
                     {
                         $("#form-row-zone").show();
                         break;
@@ -412,6 +418,12 @@ SOFTWARE.
             <optgroup label="A/V Content">
                 <option value="getSource">Get Source</option>
                 <option value="setSource">Set Source</option>
+                <option value="stop">Stop</option>
+                <option value="togglePause">Toggle Pause</option>
+                <option value="skipPrev">Skip Previous</option>
+                <option value="skipNext">Skip Next</option>
+                <option value="scanBackward">Scan Backward</option>
+                <option value="scanForward">Scan Forward</option>
             </optgroup>
         </select>
     </div>

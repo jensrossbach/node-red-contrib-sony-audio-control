@@ -22,14 +22,16 @@ If you would like to propose a new feature or any kind of improvement or if you 
     - [Configuration](#configuration-3)
     - [Input](#input-2)
     - [Outputs](#outputs-2)
-- [Sony Trademark](#sony-trademark)
+- [Sony Legal Information](#sony-legal-information)
+    - [Trademark](#trademark)
+    - [License Audio Control API](#license-audio-control-api)
 - [License](#license)
 
 ## Documentation
 The node collection consists of four flow nodes and one configuration node. The configuration node stores the network address of your Sony audio device. You have to specify a host name (or IP address) and the port (by default, port 10000 is used).
 
 ### Request Node
-The request node of the Node-RED Sony Audio Control node collection is the interface to the request/response API of Sony audio devices. It provides the full power of the Sony Audio Control API but requires some knowledge of the API when used stand-alone. Therefore it is recommended to combine a request node with a control node and/or a filter node. If you still want to use the node stand-alone (because maybe the required functionality is not available through the control node), you should read the specification of the [Sony Audio Control API](https://developer.sony.com/develop/audio-control-api/hardware-overview/api-overview).
+The request node of the Node-RED Sony Audio Control node collection is the interface to the request/response API of Sony audio devices. It provides the full power of the Sony Audio Control API but requires some knowledge of the API when used stand-alone. Therefore it is recommended to combine a request node with a control node and/or a filter node. If you still want to use the node stand-alone (because maybe the required functionality is not available through the control node), please refer to the Sony [Audio Control API](https://developer.sony.com/develop/audio-control-api/api-references/api-overview-2) reference for further information.
 
 ![Request Node](images/request_node.png)
 
@@ -53,7 +55,7 @@ The error codes are defined by the Sony Audio Control API, however some node rel
 Both outputs additionally contain the properties `msg.service`, `msg.method` and `msg.version` corresponding to the request.
 
 ### Event Node
-The event node of the Node-RED Sony Audio Control node collection is the interface to the notification API of Sony audio devices. It allows to subscribe for certain notification events of the different API services and provides the details of the notification on its output. The information provided at the output is in the format sent by the device and requires some knowledge of the API when used stand-alone. Therefore it is recommended to combine an event node with a filter node. If you still want to use the node stand-alone (because maybe the required filtering is not available through the filter node), you should read the specification of the [Sony Audio Control API](https://developer.sony.com/develop/audio-control-api/hardware-overview/api-overview).
+The event node of the Node-RED Sony Audio Control node collection is the interface to the notification API of Sony audio devices. It allows to subscribe for certain notification events of the different API services and provides the details of the notification on its output. The information provided at the output is in the format sent by the device and requires some knowledge of the API when used stand-alone. Therefore it is recommended to combine an event node with a filter node. If you still want to use the node stand-alone (because maybe the required filtering is not available through the filter node), please refer to the Sony [Audio Control API](https://developer.sony.com/develop/audio-control-api/api-references/api-overview-2) reference for further information.
 
 ![Event Node](images/event_node.png)
 
@@ -223,8 +225,16 @@ The following table lists the payload formats for the different filters:
 |Football Mode|Boolean|True if the Football Mode is active, false otherwise|
 |Voice        |String |The name of the Voice setting                       |
 
-## Sony Trademark
+## Sony Legal Information
+### Trademark
 The trademark "SONY" and any other product names, service names or logos of SONY used, quoted and/or referenced in this Web Site are trademarks or registered trademarks of Sony Corporation or any of its affiliates.
+
+### License Audio Control API
+Copyright (c) 2019 Sony Corporation. All rights reserved.
+
+The 'Audio Control API' is licensed to the user by Sony Video & Sound products Inc. under the license terms of the [Creative Commons Attribution-NoDerivatives 4.0 International Public License](https://creativecommons.org/licenses/by-nd/4.0/legalcode).
+
+For more information, see the official web site of the Sony [Audio Control API](https://developer.sony.com/develop/audio-control-api).
 
 ## License
 Copyright (c) 2019 Jens-Uwe Rossbach

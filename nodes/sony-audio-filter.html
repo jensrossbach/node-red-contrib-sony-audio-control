@@ -104,7 +104,8 @@ SOFTWARE.
                     filterName.append($("<option></option>").val("absoluteVolume").text("Absolute Volume"));
                     filterName.append($("<option></option>").val("relativeVolume").text("Relative Volume"));
                     filterName.append($("<option></option>").val("muted").text("Muted"));
-                    filterName.append($("<option></option>").val("sound-setting").text("Sound Setting"));
+                    filterName.append($("<option></option>").val("soundSetting").text("Sound Setting"));
+                    filterName.append($("<option></option>").val("playbackMode").text("Playback Mode"));
 
                     var onlyIfTrueContainer = $("<span/>", {id: "item-elem-onlyiftrue-" + index,
                                                             style: "padding-left: 10px;"}).appendTo(item);
@@ -120,11 +121,22 @@ SOFTWARE.
                     var soundSetting = $("<select/>", {id: "node-input-soundsetting-" + index,
                                                        class: "node-input-filter-soundsetting",
                                                        style: "width: 120px;"}).appendTo(soundSettingContainer);
+                    soundSetting.append($("<option></option>").val("any").text("Any"));
                     soundSetting.append($("<option></option>").val("soundField").text("Sound Field"));
                     soundSetting.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
                     soundSetting.append($("<option></option>").val("nightMode").text("Night Mode"));
                     soundSetting.append($("<option></option>").val("footballMode").text("Football Mode"));
                     soundSetting.append($("<option></option>").val("voice").text("Voice"));
+
+                    var playbackModeContainer = $("<span/>", {id: "item-elem-playbackmode-" + index,
+                                                              style: "padding-left: 10px;"}).appendTo(item);
+                    var playbackMode = $("<select/>", {id: "node-input-playbackmode-" + index,
+                                                       class: "node-input-filter-playbackmode",
+                                                       style: "width: 120px;"}).appendTo(playbackModeContainer);
+                    playbackMode.append($("<option></option>").val("any").text("Any"));
+                    playbackMode.append($("<option></option>").val("playType").text("Playback"));
+                    playbackMode.append($("<option></option>").val("repeatType").text("Repeat"));
+                    playbackMode.append($("<option></option>").val("shuffleType").text("Shuffle"));
 
                     var idx = $("<span/>", {style: "float: right; margin-top: 6px;"}).appendTo(item);
                     idx.append(" &#8594; <span class=\"node-input-filter-index\">" + (index + 1) + "</span> ");
@@ -135,6 +147,7 @@ SOFTWARE.
 
                         onlyIfTrueContainer.hide();
                         soundSettingContainer.hide();
+                        playbackModeContainer.hide();
 
                         switch (value)
                         {
@@ -144,9 +157,14 @@ SOFTWARE.
                                 onlyIfTrueContainer.show();
                                 break;
                             }
-                            case "sound-setting":
+                            case "soundSetting":
                             {
                                 soundSettingContainer.show();
+                                break;
+                            }
+                            case "playbackMode":
+                            {
+                                playbackModeContainer.show();
                                 break;
                             }
                         }
@@ -161,6 +179,10 @@ SOFTWARE.
                         else if ("setting" in filter.args)
                         {
                             soundSetting.val(filter.args.setting);
+                        }
+                        else if ("mode" in filter.args)
+                        {
+                            playbackMode.val(filter.args.mode);
                         }
                     }
 
@@ -212,9 +234,14 @@ SOFTWARE.
                         filter["args"] = {onlyIfTrue: $(this).find(".node-input-filter-onlyiftrue").prop("checked")};
                         break;
                     }
-                    case "sound-setting":
+                    case "soundSetting":
                     {
                         filter["args"] = {setting: $(this).find(".node-input-filter-soundsetting").val()};
+                        break;
+                    }
+                    case "playbackMode":
+                    {
+                        filter["args"] = {mode: $(this).find(".node-input-filter-playbackmode").val()};
                         break;
                     }
                 }

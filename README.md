@@ -22,10 +22,10 @@ If you would like to propose a new feature or any kind of improvement or if you 
     - [Configuration](#configuration-3)
     - [Input](#input-2)
     - [Outputs](#outputs-2)
+- [License](#license)
 - [Sony Legal Information](#sony-legal-information)
     - [Trademark](#trademark)
     - [License Audio Control API](#license-audio-control-api)
-- [License](#license)
 
 ## Documentation
 The node collection consists of four flow nodes and one configuration node. The configuration node stores the network address of your Sony audio device. You have to specify a host name (or IP address) and the port (by default, port 10000 is used).
@@ -90,6 +90,8 @@ The following commands can be configured. The table shows also how they map to t
 |Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                                |
 |Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                                |
 |Set Sound Settings    |setSoundSettings|Set sound settings on the device                                             |
+|Get Playback Modes    |getPlaybackModes|Retrieve current playback modes on the device                                |
+|Set Playback Modes    |setPlaybackModes|Set playback modes on the device                                             |
 |Stop                  |stop            |Stop current audio playback                                                  |
 |Toggle Pause          |togglePause     |Toggle between paused and playing state                                      |
 |Skip Previous         |skipPrev        |Skip to previous or beginning of currently playing content                   |
@@ -97,19 +99,23 @@ The following commands can be configured. The table shows also how they map to t
 |Scan Backward         |scanBackward    |Scan forward in currently playing content                                    |
 |Scan Forward          |scanForward     |Scan backward in currently playing content                                   |
 
-Below table shows the mapping from configuration settings to settings which can be provided via the input message. See next chapter for more information about overwriting settings via the input message.
+Below table shows the mapping from configuration settings to payload parameters which can be provided via the input message. See next chapter for more information about overwriting settings via the input message.
 
-|Configuration                     |Setting       |
+|Configuration                     |Payload       |
 |----------------------------------|--------------|
 |Source                            |type, source  |
 |Port                              |port          |
 |Volume                            |volume        |
 |Relative Volume                   |relativeVolume|
 |List of Sound Settings<sup>1</sup>|soundSettings |
-|Target                            |target        |
+|Setting                           |target        |
+|List of Playback Modes<sup>2</sup>|modeSettings  |
+|Mode                              |target        |
 |Zone                              |zone          |
 
 <sup>1</sup> The list of sound settings is a list where you can add new rows each representing a sound setting. You can choose the setting from the dropdown box and then depending on the selected setting, either turn the setting on or off, or select the setting's value from a second dropdown box.
+
+<sup>2</sup> The list of playback modes is a list where you can add new rows each representing a playback mode. You can choose the mode type from the dropdown box and then select the mode's value from a second dropdown box.
 
 #### Input
 The input of the control node is used to trigger an action on one side and can be utilized to overwrite the command and its settings (or a part of them) from the configurations page on the other side.
@@ -126,8 +132,9 @@ The following properties are defined:
 |volume        |setVolume            |Number      |The volume to set, can either be an absolute volume (>= 0) or a relative volume step (!= 0)|
 |relativeVolume|setVolume            |Boolean     |True if the provided volume is a relative volume step, false otherwise                     |
 |soundSettings<sup>2</sup>|setSoundSettings|Array |The sound settings to be activated                                                         |
-|target        |getSoundSettings     |String      |The sound setting to retrieve                                                              |
-|zone<sup>3</sup>|setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute, stop, togglePause, skipPrev, skipNext, scanBackward, scanForward|Number [0-9]|The ouput zone of the device|
+|modeSettings<sup>3</sup>|setPlaybackModes|Array  |The playback modes to be activated                                                         |
+|target<sup>4</sup>|getSoundSettings, getPlaybackModes|String|The type of sound setting or playback mode to retrieve                          |
+|zone<sup>5</sup>|setSource, getSource, setVolume, getVolumeInfo, mute, unmute, toggleMute, stop, togglePause, skipPrev, skipNext, scanBackward, scanForward|Number [0-9]|The ouput zone of the device|
 
 <sup>1</sup> The audio source can be specified via the properties `type`, `source` and `port`. The latter is only needed for HDMI sources. The following combinations are possible:
 
@@ -168,7 +175,26 @@ The following properties are defined:
 |voice       |type2     |
 |voice       |type3     |
 
-<sup>3</sup> Setting `zone` to 0 means that all output zones are affected.
+<sup>3</sup> The playback modes can be specified via property `modeSettings` which is an array of objects each consisting of the properties `target` and `value`. The following combinations are possible:
+
+|target      |value       |
+|------------|------------|
+|playType    |normal      |
+|playType    |repeatAll   |
+|playType    |repeatFolder|
+|playType    |repeatTrack |
+|playType    |shuffleAll  |
+|repeatType  |off         |
+|repeatType  |all         |
+|repeatType  |folder      |
+|repeatType  |track       |
+|repeatType  |chapter     |
+|shuffleType |off         |
+|shuffleType |folder      |
+
+<sup>4</sup> Setting `target` to an empty string means that all sound settings (when used with getSoundSettings) or all playback modes (when used with getPlaybackModes) are retrieved. In this case, the corresponding filter from the filter node should not bet set to "Any" but to a specific setting or mode instead. For valid values for `target`, see tables under <sup>2</sup> and <sup>3</sup>.
+
+<sup>5</sup> Setting `zone` to 0 means that all output zones are affected.
 
 #### Outputs
 The output contains the `msg.service`, `msg.method`, `msg.version` and `msg.payload` properties corresponding to the input of the request node.
@@ -201,7 +227,8 @@ The following table lists the payload formats for the different filters:
 |Absolute Volume          |Number         |The current absolute volume                                       |
 |Relative Volume          |Number         |The current relative volume                                       |
 |Muted                    |Boolean        |True if the audio output is muted, false otherwise                |
-|Sound Setting<sup>2</sup>|String, Boolean|The current value of the selected sound setting                   |
+|Sound Setting<sup>2</sup>|String, Boolean|The current value of the selected type of setting                 |
+|Playback Mode<sup>3</sup>|String         |The current value of the selected type of mode                    |
 
 <sup>1</sup> The audio source is provided via the properties `type`, `source` and `port`. The latter is only present for HDMI sources. The following combinations are possible:
 
@@ -221,26 +248,17 @@ The following table lists the payload formats for the different filters:
 |dlna    |music   |     |
 |radio   |fm      |     |
 
-<sup>2</sup> Depending on the selected sound setting, the output format is like described in below table:
+<sup>2</sup> Depending on the selected sound setting, the output format is like described in below table. Select _Any_ to filter for the setting which was selected in the command of the control node. Selecting a specific type of setting is only meaningful if _All_ has been selected in the control node.
 
 |Sound Setting|Format |Description                                         |
 |-------------|-------|----------------------------------------------------|
-|Sound Field  |String |The name of the Sound Field setting                 |
+|Sound Field  |String |The value of the Sound Field setting                |
 |Clear Audio +|Boolean|True if the Clear Audio + is active, false otherwise|
 |Night Mode   |Boolean|True if the Night Mode is active, false otherwise   |
 |Football Mode|Boolean|True if the Football Mode is active, false otherwise|
-|Voice        |String |The name of the Voice setting                       |
+|Voice        |String |The value of the Voice setting                      |
 
-## Sony Legal Information
-### Trademark
-The trademark "SONY" and any other product names, service names or logos of SONY used, quoted and/or referenced in this Web Site are trademarks or registered trademarks of Sony Corporation or any of its affiliates.
-
-### License Audio Control API
-Copyright (c) 2019 Sony Corporation. All rights reserved.
-
-The 'Audio Control API' is licensed to the user by Sony Video & Sound products Inc. under the license terms of the [Creative Commons Attribution-NoDerivatives 4.0 International Public License](https://creativecommons.org/licenses/by-nd/4.0/legalcode).
-
-For more information, see the official web site of the Sony [Audio Control API](https://developer.sony.com/develop/audio-control-api).
+<sup>3</sup> The output format is always a string containing the value corresponding to the selected type of mode. Select _Any_ to filter for the mode which was selected in the command of the control node. Selecting a specific type of mode is only meaningful if _All_ has been selected in the control node.
 
 ## License
 Copyright (c) 2019 Jens-Uwe Rossbach
@@ -264,3 +282,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Sony Legal Information
+### Trademark
+The trademark "SONY" and any other product names, service names or logos of SONY used, quoted and/or referenced in this Web Site are trademarks or registered trademarks of Sony Corporation or any of its affiliates.
+
+### License Audio Control API
+Copyright (c) 2019 Sony Corporation. All rights reserved.
+
+The 'Audio Control API' is licensed to the user by Sony Video & Sound products Inc. under the license terms of the [Creative Commons Attribution-NoDerivatives 4.0 International Public License](https://creativecommons.org/licenses/by-nd/4.0/legalcode).
+
+For more information, see the official web site of the Sony [Audio Control API](https://developer.sony.com/develop/audio-control-api).

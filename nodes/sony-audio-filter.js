@@ -188,19 +188,19 @@ module.exports = function(RED)
 
                                 break;
                             }
-                            case "sound-setting":
+                            case "soundSetting":
                             {
                                 if ((msg.payload !== null) &&
                                     (msg.method == "getSoundSettings"))
                                 {
-                                    for (j=0; j<msg.payload.length; ++j)
+                                    if (this.filters[i].args.setting === "any")
                                     {
-                                        let setting =  msg.payload[j];
-
-                                        if (("target" in setting) &&
-                                            ("currentValue" in setting))
+                                        if (msg.payload.length > 0)
                                         {
-                                            if (setting.target === this.filters[i].args.setting)
+                                            let setting =  msg.payload[0];
+
+                                            if (("target" in setting) &&
+                                                ("currentValue" in setting))
                                             {
                                                 switch (setting.target)
                                                 {
@@ -218,8 +218,78 @@ module.exports = function(RED)
                                                         break;
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (j=0; j<msg.payload.length; ++j)
+                                        {
+                                            let setting =  msg.payload[j];
 
-                                                break;
+                                            if (("target" in setting) &&
+                                                ("currentValue" in setting))
+                                            {
+                                                if (setting.target === this.filters[i].args.setting)
+                                                {
+                                                    switch (setting.target)
+                                                    {
+                                                        case "soundField":
+                                                        case "voice":
+                                                        {
+                                                            outputs[i] = {payload: setting.currentValue};
+                                                            break;
+                                                        }
+                                                        case "clearAudio":
+                                                        case "nightMode":
+                                                        case "footballMode":
+                                                        {
+                                                            outputs[i] = {payload: (setting.currentValue === "on")};
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            case "playbackMode":
+                            {
+                                if ((msg.payload !== null) &&
+                                    (msg.method == "getPlaybackModeSettings"))
+                                {
+                                    if (this.filters[i].args.mode === "any")
+                                    {
+                                        if (msg.payload.length > 0)
+                                        {
+                                            let setting =  msg.payload[0];
+
+                                            if (("target" in setting) &&
+                                                ("currentValue" in setting))
+                                            {
+                                                outputs[i] = {payload: setting.currentValue};
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (j=0; j<msg.payload.length; ++j)
+                                        {
+                                            let setting =  msg.payload[j];
+
+                                            if (("target" in setting) &&
+                                                ("currentValue" in setting))
+                                            {
+                                                if (setting.target === this.filters[i].args.mode)
+                                                {
+                                                    outputs[i] = {payload: setting.currentValue};
+                                                    break;
+                                                }
                                             }
                                         }
                                     }

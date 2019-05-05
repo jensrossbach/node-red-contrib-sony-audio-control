@@ -75,9 +75,17 @@ SOFTWARE.
             {
                 value: [{target: "soundField", value: "clearAudio"}]
             },
-            target:
+            soundtarget:
             {
                 value: "soundField"
+            },
+            modesettings:
+            {
+                value: [{target: "playType", value: "normal"}]
+            },
+            modetarget:
+            {
+                value: "playType"
             }
         },
         oneditprepare: function()
@@ -174,12 +182,12 @@ SOFTWARE.
                         soundSetting.value = "off";
                     }
 
-                    var target = $("<select/>", {class: "node-input-target"}).appendTo(item);
-                    target.append($("<option></option>").val("soundField").text("Sound Field"));
-                    target.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
-                    target.append($("<option></option>").val("nightMode").text("Night Mode"));
-                    target.append($("<option></option>").val("footballMode").text("Football Mode"));
-                    target.append($("<option></option>").val("voice").text("Voice"));
+                    var soundtarget = $("<select/>", {class: "node-input-soundtarget"}).appendTo(item);
+                    soundtarget.append($("<option></option>").val("soundField").text("Sound Field"));
+                    soundtarget.append($("<option></option>").val("clearAudio").text("Clear Audio +"));
+                    soundtarget.append($("<option></option>").val("nightMode").text("Night Mode"));
+                    soundtarget.append($("<option></option>").val("footballMode").text("Football Mode"));
+                    soundtarget.append($("<option></option>").val("voice").text("Voice"));
 
                     var soundFieldContainer = $("<span/>", {id: "item-elem-soundfield-" + index,
                                                             style: "padding-left: 10px;"}).appendTo(item);
@@ -210,9 +218,9 @@ SOFTWARE.
                     $("<label/>", {for: "node-input-onoff-" + index,
                                    style: "padding-left: 4px;"}).text("Switched On").appendTo(onoffContainer);
 
-                    target.change(function()
+                    soundtarget.change(function()
                     {
-                        value = target.val();
+                        value = soundtarget.val();
 
                         soundFieldContainer.hide();
                         voiceTypeContainer.hide();
@@ -245,14 +253,102 @@ SOFTWARE.
                         onoff.prop("checked", (soundSetting.value == "on"));
                     }
 
-                    target.val(soundSetting.target);
-                    target.change();
+                    soundtarget.val(soundSetting.target);
+                    soundtarget.change();
+                }
+            });
+
+            var modeSettingsList = $("#node-input-modesettings-list").css("min-height", "250px").editableList(
+            {
+                removable: true,
+                addItem: function(item, index, modeSetting)
+                {
+                    if (!("target" in modeSetting))
+                    {
+                        modeSetting.target = "playType";
+                        modeSetting.value = "normal";
+                    }
+
+                    var modeType = $("<select/>", {class: "node-input-modetarget"}).appendTo(item);
+                    modeType.append($("<option></option>").val("playType").text("Playback Mode"));
+                    modeType.append($("<option></option>").val("repeatType").text("Repeat Mode"));
+                    modeType.append($("<option></option>").val("shuffleType").text("Shuffle Mode"));
+
+                    var playTypeContainer = $("<span/>", {id: "item-elem-playtype-" + index,
+                                                            style: "padding-left: 10px;"}).appendTo(item);
+                    var playType = $("<select/>", {class: "node-input-playtype",
+                                                   style: "width: 120px;"}).appendTo(playTypeContainer);
+                    playType.append($("<option></option>").val("normal").text("Normal"));
+                    playType.append($("<option></option>").val("repeatAll").text("Folder"));
+                    playType.append($("<option></option>").val("repeatFolder").text("Repeat All"));
+                    playType.append($("<option></option>").val("repeatTrack").text("Repeat Track"));
+                    playType.append($("<option></option>").val("shuffleAll").text("Shuffle All"));
+
+                    var repeatTypeContainer = $("<span/>", {id: "item-elem-repeattype-" + index,
+                                                            style: "padding-left: 10px;"}).appendTo(item);
+                    var repeatType = $("<select/>", {class: "node-input-repeattype",
+                                                    style: "width: 120px;"}).appendTo(repeatTypeContainer);
+                    repeatType.append($("<option></option>").val("off").text("Off"));
+                    repeatType.append($("<option></option>").val("all").text("All"));
+                    repeatType.append($("<option></option>").val("folder").text("Folder"));
+                    repeatType.append($("<option></option>").val("track").text("Track"));
+                    repeatType.append($("<option></option>").val("chapter").text("Chapter"));
+
+                    var shuffleTypeContainer = $("<span/>", {id: "item-elem-shuffletype-" + index,
+                                                             style: "padding-left: 10px;"}).appendTo(item);
+                    var shuffleType = $("<select/>", {class: "node-input-shuffletype",
+                                                      style: "width: 120px;"}).appendTo(shuffleTypeContainer);
+                    shuffleType.append($("<option></option>").val("off").text("Off"));
+                    shuffleType.append($("<option></option>").val("folder").text("Folder"));
+
+                    modeType.change(function()
+                    {
+                        value = modeType.val();
+
+                        playTypeContainer.hide();
+                        repeatTypeContainer.hide();
+                        shuffleTypeContainer.hide();
+
+                        if (value == "playType")
+                        {
+                            playTypeContainer.show();
+                        }
+                        else if (value == "repeatType")
+                        {
+                            repeatTypeContainer.show();
+                        }
+                        else if (value == "shuffleType")
+                        {
+                            shuffleTypeContainer.show();
+                        }
+                    });
+
+                    if (modeSetting.target == "playType")
+                    {
+                        playType.val(modeSetting.value);
+                    }
+                    else if (modeSetting.target == "repeatType")
+                    {
+                        repeatType.val(modeSetting.value);
+                    }
+                    else if (modeSetting.target == "shuffleType")
+                    {
+                        shuffleType.val(modeSetting.value);
+                    }
+
+                    modeType.val(modeSetting.target);
+                    modeType.change();
                 }
             });
 
             this.soundsettings.forEach(setting =>
             {
                 soundSettingsList.editableList("addItem", setting);
+            });
+
+            this.modesettings.forEach(setting =>
+            {
+                modeSettingsList.editableList("addItem", setting);
             });
 
             relativeVol.change(function()
@@ -292,7 +388,9 @@ SOFTWARE.
                 $("#form-row-zone").hide();
                 $("#form-row-port").hide();
                 $("#form-row-soundsettings").hide();
-                $("#form-row-target").hide();
+                $("#form-row-soundtarget").hide();
+                $("#form-row-modesettings").hide();
+                $("#form-row-modetarget").hide();
 
                 var value = $(this).val();
                 switch (value)
@@ -338,7 +436,17 @@ SOFTWARE.
                     }
                     case "getSoundSettings":
                     {
-                        $("#form-row-target").show();
+                        $("#form-row-soundtarget").show();
+                        break;
+                    }
+                    case "setPlaybackModes":
+                    {
+                        $("#form-row-modesettings").show();
+                        break;
+                    }
+                    case "getPlaybackModes":
+                    {
+                        $("#form-row-modetarget").show();
                         break;
                     }
                 }
@@ -368,11 +476,12 @@ SOFTWARE.
         {
             var node = this;
             var soundSettingsList = $("#node-input-soundsettings-list").editableList("items");
+            var modeSettingsList = $("#node-input-modesettings-list").editableList("items");
 
             node.soundsettings = [];
             soundSettingsList.each(function(index)
             {
-                var setting = {target: $(this).find(".node-input-target").val()};
+                var setting = {target: $(this).find(".node-input-soundtarget").val()};
                 if (setting.target == "soundField")
                 {
                     setting.value = $(this).find(".node-input-soundfield").val();
@@ -388,6 +497,26 @@ SOFTWARE.
 
                 node.soundsettings.push(setting);
             });
+
+            node.modesettings = [];
+            modeSettingsList.each(function(index)
+            {
+                var setting = {target: $(this).find(".node-input-modetarget").val()};
+                if (setting.target == "playType")
+                {
+                    setting.value = $(this).find(".node-input-playtype").val();
+                }
+                else if (setting.target == "repeatType")
+                {
+                    setting.value = $(this).find(".node-input-repeattype").val();
+                }
+                else if (setting.target == "shuffleType")
+                {
+                    setting.value = $(this).find(".node-input-shuffletype").val();
+                }
+
+                node.modesettings.push(setting);
+            });
         }
     });
 </script>
@@ -398,7 +527,7 @@ SOFTWARE.
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-command"><i class="fa fa-play-circle"></i> Command</label>
+        <label for="node-input-command"><i class="fa fa-cog"></i> Command</label>
         <select id="node-input-command">
             <optgroup label="System">
                 <option value="getPowerStatus">Get Power Status</option>
@@ -418,6 +547,8 @@ SOFTWARE.
             <optgroup label="A/V Content">
                 <option value="getSource">Get Source</option>
                 <option value="setSource">Set Source</option>
+                <option value="getPlaybackModes">Get Playback Modes</option>
+                <option value="setPlaybackModes">Set Playback Modes</option>
                 <option value="stop">Stop</option>
                 <option value="togglePause">Toggle Pause</option>
                 <option value="skipPrev">Skip Previous</option>
@@ -468,14 +599,27 @@ SOFTWARE.
     <div id="form-row-soundsettings" class="form-row" style="padding-top: 10px">
         <ol id="node-input-soundsettings-list"></ol>
     </div>
-    <div id="form-row-target" class="form-row">
-        <label for="node-input-target"><i class="fa fa-cog"></i> Target</label>
-        <select id="node-input-target">
+    <div id="form-row-soundtarget" class="form-row">
+        <label for="node-input-soundtarget"><i class="fa fa-sliders"></i> Setting</label>
+        <select id="node-input-soundtarget">
+            <option value="all">All</option>
             <option value="soundField">Sound Field</option>
             <option value="clearAudio">Clear Audio +</option>
             <option value="nightMode">Night Mode</option>
             <option value="footballMode">Football Mode</option>
             <option value="voice">Voice</option>
+        </select>
+    </div>
+    <div id="form-row-modesettings" class="form-row" style="padding-top: 10px">
+        <ol id="node-input-modesettings-list"></ol>
+    </div>
+    <div id="form-row-modetarget" class="form-row">
+        <label for="node-input-modetarget"><i class="fa fa-sliders"></i> Mode</label>
+        <select id="node-input-modetarget">
+            <option value="all">All</option>
+            <option value="playType">Playback</option>
+            <option value="repeatType">Repeat</option>
+            <option value="shuffleType">Shuffle</option>
         </select>
     </div>
 </script>
@@ -563,11 +707,24 @@ SOFTWARE.
             array containing the properties <code>target</code> and
             <code>value</code> for each setting.
         </dd>
-        <dt>Target</dt>
+        <dt>Setting</dt>
         <dd>
-            Select the sound setting to be retrieved. The selected setting
-            can be overwritten via the <code>msg.payload.target</code> property
-            of the input message.
+            Select the sound setting to be retrieved or <i>All</i> to retrieve all
+            settings. The selected setting can be overwritten via the
+            <code>msg.payload.target</code> property of the input message.
+        </dd>
+        <dt>Playback Mode List</dt>
+        <dd>
+            Select the playback modes. You can select multiple modes by adding
+            additional rows to the list. The selection can be overwritten via
+            the <code>msg.payload.modeSettings</code> array containing the
+            properties <code>target</code> and <code>value</code> for each mode.
+        </dd>
+        <dt>Mode</dt>
+        <dd>
+            Select the type of playback mode to be retrieved or <i>All</i> to retrieve
+            all modes. The selected mode type can be overwritten via the
+            <code>msg.payload.target</code> property of the input message.
         </dd>
         <dt>Zone</dt>
         <dd>

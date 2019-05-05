@@ -35,8 +35,10 @@ module.exports = function(RED)
         this.source = config.source;
         this.zone = config.zone;
         this.port = config.port;
-        this.soundsettings = config.soundsettings;
-        this.target = config.target;
+        this.soundSettings = config.soundsettings;
+        this.soundTarget = config.soundtarget;
+        this.modeSettings = config.modesettings;
+        this.modeTarget = config.modetarget;
 
         function setPowerStatus(status)
         {
@@ -69,6 +71,14 @@ module.exports = function(RED)
             return {service: "audio",
                     method: "setSoundSettings",
                     version: "1.1",
+                    payload: {settings: params}};
+        }
+
+        function setPlaybackModeSettings(params)
+        {
+            return {service: "avContent",
+                    method: "setPlaybackModeSettings",
+                    version: "1.0",
                     payload: {settings: params}};
         }
 
@@ -160,8 +170,21 @@ module.exports = function(RED)
                     payload: {target: target}};
         }
 
+        function getPlaybackModeSettings(target)
+        {
+            return {service: "avContent",
+                    method: "getPlaybackModeSettings",
+                    version: "1.0",
+                    payload: {target: target}};
+        }
+
         if ((this.command == "setSoundSettings") &&
-            (this.soundsettings.length == 0))
+            (this.soundSettings.length == 0))
+        {
+            this.status({fill: "yellow", shape: "dot", text: "configuration errors"});
+        }
+        else if ((this.command == "setPlaybackModes") &&
+                 (this.modeSettings.length == 0))
         {
             this.status({fill: "yellow", shape: "dot", text: "configuration errors"});
         }
@@ -268,7 +291,7 @@ module.exports = function(RED)
                 }
                 case "setSoundSettings":
                 {
-                    let args = {soundSettings: this.soundsettings};
+                    let args = {soundSettings: this.soundSettings};
                     if ((typeof msg.payload == "object") &&
                         Array.isArray(msg.payload.soundSettings))
                     {
@@ -304,6 +327,18 @@ module.exports = function(RED)
                     }
 
                     this.send(setPlayContent(args.source, args.port, args.zone));
+                    break;
+                }
+                case "setPlaybackModes":
+                {
+                    let args = {modeSettings: this.modeSettings};
+                    if ((typeof msg.payload == "object") &&
+                        Array.isArray(msg.payload.modeSettings))
+                    {
+                        args.modeSettings = msg.payload.modeSettings;
+                    }
+
+                    this.send(setPlaybackModeSettings(args.modeSettings));
                     break;
                 }
                 case "stop":
@@ -417,7 +452,7 @@ module.exports = function(RED)
                 }
                 case "getSoundSettings":
                 {
-                    let args = {target: this.target};
+                    let args = {target: (this.soundTarget == "all") ? "" : this.soundTarget};
 
                     if ((typeof msg.payload == "object") &&
                         (typeof msg.payload.target == "string"))
@@ -426,6 +461,19 @@ module.exports = function(RED)
                     }
 
                     this.send(getSoundSettings(args.target));
+                    break;
+                }
+                case "getPlaybackModes":
+                {
+                    let args = {target: (this.modeTarget == "all") ? "" : this.modeTarget};
+
+                    if ((typeof msg.payload == "object") &&
+                        (typeof msg.payload.target == "string"))
+                    {
+                        args.target = msg.payload.target;
+                    }
+
+                    this.send(getPlaybackModeSettings(args.target));
                     break;
                 }
                 default:

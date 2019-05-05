@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2019-05-05
+### Added
+- Added support for playback control commands (stop, pause, next, previous, ...).
+- Added support for playback modes (repeat, shuffle, ...).
+- Added option _All_ to sound setting selection in control node.
+- Added option _Any_ to sound setting filter in filter node.
+
+### Changed
+- Improved documentation and Sony legal information in [README.md](README.md).
+
 ## [1.1.2] - 2019-04-16
 ### Added
 - Added status indicators for control and filter node showing configuration issues.

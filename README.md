@@ -71,7 +71,7 @@ The control node of the Node-RED Sony Audio Control node collection supports the
 ![Control Node](images/control_node.png)
 
 #### Configuration
-In the configuration page of the node, you can choose the name of the node (if no name is provided, the default name will be "control: _command_"). Additionally the command can be chosen which will be executed unless it is overwritten by the input message. Depending on the selected command, different settings may be configured. Also here applies that parameters from the input message might (partly) overwrite the chosen settings.
+In the configuration page of the node, you can choose the name of the node (if no name is provided, the default name will be "control: _command_"). Additionally the command can be chosen which will be executed unless it is overridden by the input message. Depending on the selected command, different settings may be configured. Also here applies that parameters from the input message might (partly) override the chosen settings.
 
 The following commands can be configured. The table shows also how they map to the commands that can be specified via the input message.
 
@@ -118,9 +118,9 @@ Below table shows the mapping from configuration settings to payload parameters 
 <sup>2</sup> The list of playback modes is a list where you can add new rows each representing a playback mode. You can choose the mode type from the dropdown box and then select the mode's value from a second dropdown box.
 
 #### Input
-The input of the control node is used to trigger an action on one side and can be utilized to overwrite the command and its settings (or a part of them) from the configurations page on the other side.
+The input of the control node is used to trigger an action on one side and can be utilized to override the command and its settings (or a part of them) from the configurations page on the other side.
 
-The command of the request can be overwritten by specifying it in the `msg.command` argument of the input message. Command settings (for instance the volume of a `setVolume` command) can be overwritten by adding them to the `msg.payload` argument of the input message. You can overwrite all command settings or only some of them. All settings which are not specified in the input message will be taken from the node configuration. The `msg.payload` parameter must be an object with one property for each command setting.
+The command of the request can be overridden by specifying it in the `msg.command` argument of the input message. Command settings (for instance the volume of a `setVolume` command) can be overridden by adding them to the `msg.payload` argument of the input message. You can override all command settings or only some of them. All settings which are not specified in the input message will be taken from the node configuration. The `msg.payload` parameter must be an object with one property for each command setting.
 
 The following properties are defined:
 
@@ -215,7 +215,7 @@ The sound settings filter provides an additional dropdown box to select the sett
 The filter node expects the output messages from a request node or an event node as input. It will then process the messages according to the selected filters and produce output messages accordingly.
 
 #### Outputs
-The filter node has a variable number of outputs which is determined by the number of configured filters. Each filter gets a dedicated output assigned. When there is an input message arriving and a filter matches the input (i.e. it can handle the method of the input message), it will process the message and send a filtered message on its dedicated output. If multiple filters match the input, there will be multiple output messages sent. The filtered data in contained in the `msg.payload` of the output messages.
+The filter node has a variable number of outputs which is determined by the number of configured filters. Each filter gets a dedicated output assigned. When there is an input message arriving and a filter matches the input (i.e. it can handle the method of the input message), it will process the message and send a filtered message on its dedicated output. If multiple filters match the input, there will be multiple output messages sent. The filtered data is contained in the `msg.payload` of the output messages.
 
 The following table lists the payload formats for the different filters:
 

@@ -292,6 +292,7 @@ module.exports = function(RED)
                 case "setSoundSettings":
                 {
                     let args = {soundSettings: this.soundSettings};
+
                     if ((typeof msg.payload == "object") &&
                         Array.isArray(msg.payload.soundSettings))
                     {
@@ -332,6 +333,7 @@ module.exports = function(RED)
                 case "setPlaybackModes":
                 {
                     let args = {modeSettings: this.modeSettings};
+
                     if ((typeof msg.payload == "object") &&
                         Array.isArray(msg.payload.modeSettings))
                     {

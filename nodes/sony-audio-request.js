@@ -44,7 +44,7 @@ module.exports = function(RED)
         {
             if (this.timeout != null)
             {
-                clearTimeout(timeout);
+                clearTimeout(this.timeout);
                 this.timeout = null;
             }
 
@@ -134,7 +134,7 @@ module.exports = function(RED)
             {
                 if (this.timeout != null)
                 {
-                    clearTimeout(timeout);
+                    clearTimeout(this.timeout);
                     this.timeout = null;
                 }
             });

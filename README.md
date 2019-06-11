@@ -48,9 +48,9 @@ The error codes are defined by the Sony Audio Control API, however some node rel
 
 |Error Code|Description                                |
 |----------|-------------------------------------------|
-|32568     |Invalid node input                         |
-|32569     |Invalid command (to the control node)      |
-|32570     |Error in communication with the API service|
+|32768     |Invalid node input                         |
+|32769     |Invalid command (to the control node)      |
+|32770     |Error in communication with the API service|
 
 Both outputs additionally contain the properties `msg.service`, `msg.method` and `msg.version` corresponding to the request.
 

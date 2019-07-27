@@ -209,11 +209,6 @@ module.exports = function(RED)
                     this.send(setPowerStatus("off"));
                     break;
                 }
-                case "standby":
-                {
-                    this.send(setPowerStatus("standby"));
-                    break;
-                }
                 case "setVolume":
                 {
                     let args = {volume: this.volume,

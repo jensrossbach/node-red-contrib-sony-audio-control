@@ -1,6 +1,13 @@
 # node-red-contrib-sony-audio-control
 A collection of Node-RED nodes to control Sony audio devices via the Sony Audio Control API.
 
+---
+**NOTE**
+
+This package has been deprecated in favor of the new node collection [node-red-contrib-sony-audio](https://github.com/jensrossbach/node-red-contrib-sony-audio). This means the package is now in maintainance mode and will only get updates for severe bugs and security issues. There will not be any new features developed for these nodes.
+
+---
+
 With these nodes you can connect to your Sony audio devices and send control commands (like powering on/off, change volume etc.), retrieve information (like the current volume, the current value of a sound setting etc.) or get notified of certain events (like a change of the power state, a change of the mute state etc.).
 
 ![Sony Audio Control](images/sony_audio_control.png)
@@ -75,29 +82,28 @@ In the configuration page of the node, you can choose the name of the node (if n
 
 The following commands can be configured. The table shows also how they map to the commands that can be specified via the input message.
 
-|Configuration         |Command         |Description                                                                  |
-|----------------------|----------------|-----------------------------------------------------------------------------|
-|Get Power Status      |getPowerStatus  |Retrieve current power status of the device                                  |
-|Power ON              |powerOn         |Switch on power of the device                                                |
-|Power OFF             |powerOff        |Switch off power of the device (device is not reachable via network anymore!)|
-|Standby               |standby         |Switch the device into standby mode                                          |
-|Get Source            |getSource       |Retrieve the currently active audio source on the device                     |
-|Set Source            |setSource       |Set the currently active audio source                                        |
-|Get Volume Information|getVolumeInfo   |Retrieve information about current volume and mute state                     |
-|Set Volume            |setVolume       |Set current volume                                                           |
-|Mute                  |mute            |Mute the audio output                                                        |
-|Unmute                |unmute          |Unmute the audio output                                                      |
-|Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                                |
-|Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                                |
-|Set Sound Settings    |setSoundSettings|Set sound settings on the device                                             |
-|Get Playback Modes    |getPlaybackModes|Retrieve current playback modes on the device                                |
-|Set Playback Modes    |setPlaybackModes|Set playback modes on the device                                             |
-|Stop                  |stop            |Stop current audio playback                                                  |
-|Toggle Pause          |togglePause     |Toggle between paused and playing state                                      |
-|Skip Previous         |skipPrev        |Skip to previous or beginning of currently playing content                   |
-|Skip Next             |skipNext        |Skip to next content                                                         |
-|Scan Backward         |scanBackward    |Scan forward in currently playing content                                    |
-|Scan Forward          |scanForward     |Scan backward in currently playing content                                   |
+|Configuration         |Command         |Description                                                   |
+|----------------------|----------------|--------------------------------------------------------------|
+|Get Power Status      |getPowerStatus  |Retrieve current power status of the device                   |
+|Power ON              |powerOn         |Switch on power of the device                                 |
+|Power OFF             |powerOff        |Switch off power of the device (device goes into standby mode)|
+|Get Source            |getSource       |Retrieve the currently active audio source on the device      |
+|Set Source            |setSource       |Set the currently active audio source                         |
+|Get Volume Information|getVolumeInfo   |Retrieve information about current volume and mute state      |
+|Set Volume            |setVolume       |Set current volume                                            |
+|Mute                  |mute            |Mute the audio output                                         |
+|Unmute                |unmute          |Unmute the audio output                                       |
+|Toggle Mute           |toggleMute      |Toggle between muted and unmuted audio output                 |
+|Get Sound Settings    |getSoundSettings|Retrieve current sound settings on the device                 |
+|Set Sound Settings    |setSoundSettings|Set sound settings on the device                              |
+|Get Playback Modes    |getPlaybackModes|Retrieve current playback modes on the device                 |
+|Set Playback Modes    |setPlaybackModes|Set playback modes on the device                              |
+|Stop                  |stop            |Stop current audio playback                                   |
+|Toggle Pause          |togglePause     |Toggle between paused and playing state                       |
+|Skip Previous         |skipPrev        |Skip to previous or beginning of currently playing content    |
+|Skip Next             |skipNext        |Skip to next content                                          |
+|Scan Backward         |scanBackward    |Scan forward in currently playing content                     |
+|Scan Forward          |scanForward     |Scan backward in currently playing content                    |
 
 Below table shows the mapping from configuration settings to payload parameters which can be provided via the input message. See next chapter for more information about overwriting settings via the input message.
 

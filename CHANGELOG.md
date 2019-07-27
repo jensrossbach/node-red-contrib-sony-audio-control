@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2019-07-27
+### Changed
+- Marked package as deprecated in flavor of its successor, package [node-red-contrib-sony-audio](https://github.com/jensrossbach/node-red-contrib-sony-audio).
+
+### Fixed
+- Removed command "standby" as it didn't work (device goes into standby mode when issuing powerOff command).
+
 ## [1.2.1] - 2019-06-11
 ### Fixed
 - Fixed reference error when sending two requests quickly one after another.
